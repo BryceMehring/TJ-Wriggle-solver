@@ -5,6 +5,6 @@ void TestGrid::RunAI()
 {	
 	for(int i = 0; i < 100000; ++i)
 	{
-		MoveWriggler(0,(Direction)(rand() % 4),rand() % 2);
+		MoveWriggler(0,rand() % 2,(Direction)(rand() % 4));
 	}
 }

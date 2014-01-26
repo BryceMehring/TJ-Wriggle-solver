@@ -56,41 +56,46 @@ Grid::Grid(std::istream &file)
 	Load(file);
 }
 
-bool Grid::MoveWriggler(unsigned int id, Direction dir, bool bHead)
+bool Grid::Load(const std::string &file)
+{
+	std::ifstream inFile(file);
+	return Load(inFile);
+}
+
+bool Grid::MoveWriggler(unsigned int id, bool bHead, Direction dir)
 {
 	bool bMoved = false;
 	Wriggler& wriggler = m_wrigglers[id];
 	if(!wriggler.positons.empty())
 	{
 		uvec2 newPos = bHead ? wriggler.positons.front() : wriggler.positons.back();
-		uvec2 oldPos = newPos;
 
 		newPos.x += DIRECTIONS[dir].x;
 		newPos.y += DIRECTIONS[dir].y;
 
-		if(IsOpen(newPos))
+		if(IsValid(newPos))
 		{
 			if(bHead)
 			{
 				ClearPos(wriggler.positons.back());
-				FlipTile(wriggler.positons.front());
+				FlipTileDirection(wriggler.positons.front());
 
 				wriggler.positons.pop_back();
 				wriggler.positons.push_front(newPos);
 
-				SetExternalPos(wriggler.positons.back(),wriggler.id);
-				SetFlipedExternalPos(newPos,dir);
+				SetWrigglerTail(wriggler.positons.back(),wriggler.id);
+				SetWrigglerHead(newPos,dir);
 			}
 			else
 			{
 				ClearPos(wriggler.positons.front());
-				SetInternalPos(oldPos,dir);
+				SetWrigglerDirection(wriggler.positons.back(),dir);
 
 				wriggler.positons.pop_front();
 				wriggler.positons.push_back(newPos);
 
-				FlipTile(wriggler.positons.front());
-				SetExternalPos(newPos,wriggler.id);
+				FlipTileDirection(wriggler.positons.front());
+				SetWrigglerTail(newPos,wriggler.id);
 			}
 
 			bMoved = true;
@@ -100,10 +105,19 @@ bool Grid::MoveWriggler(unsigned int id, Direction dir, bool bHead)
 	return bMoved;
 }
 
-bool Grid::Load(const std::string &file)
+unsigned int Grid::GetNumWrigglers() const
 {
-	std::ifstream inFile(file);
-	return Load(inFile);
+	return m_wrigglers.size();
+}
+
+unsigned int Grid::GetWidth() const
+{
+	return m_uiWidth;
+}
+
+unsigned int Grid::GetHeight() const
+{
+	return m_uiHeight;
 }
 
 bool Grid::Load(std::istream &stream)
@@ -159,89 +173,6 @@ bool Grid::Load(std::istream &stream)
 	return stream;
 }
 
-void Grid::ClearPos(const uvec2 &pos)
-{
-	m_grid[pos.y][pos.x] = 'e';
-}
-
-void Grid::FlipTile(const uvec2 &pos)
-{
-	char& tile = m_grid[pos.y][pos.x];
-	switch(tile)
-	{
-	case 'U':
-		tile = '^';
-		break;
-	case 'D':
-		tile = 'v';
-		break;
-	case 'L':
-		tile = '<';
-		break;
-	case 'R':
-		tile = '>';
-		break;
-	case '^':
-		tile = 'U';
-		break;
-	case 'v':
-		tile = 'D';
-		break;
-	case '<':
-		tile = 'L';
-		break;
-	case '>':
-		tile = 'R';
-		break;
-	default:
-		assert(false);
-	}
-}
-
-void Grid::SetExternalPos(const uvec2 &pos, int id)
-{
-	m_grid[pos.y][pos.x] = id + 48;
-}
-
-void Grid::SetFlipedExternalPos(const uvec2& newPos, Direction dir)
-{
-	m_grid[newPos.y][newPos.x] = FLIPED_HEAD_DIRECTION[dir];
-}
-
-void Grid::SetExternalPos(const uvec2& newPos, Direction dir)
-{
-	m_grid[newPos.y][newPos.x] = HEAD_DIRECTION[dir];
-}
-
-void Grid::SetInternalPos(const uvec2 &pos, Direction dir)
-{
-	m_grid[pos.y][pos.x] = INTERNAL_DIRECTION[dir];
-}
-
-bool Grid::IsOpen(const uvec2 &pos) const
-{
-	if(pos.x >= m_uiWidth || pos.y >= m_uiHeight)
-		return false;
-
-	char tile = m_grid[pos.y][pos.x];
-	return (!IsWriggler(tile) && (tile != 'x'));
-}
-
-unsigned int Grid::GetNumWrigglers() const
-{
-	return m_wrigglers.size();
-}
-
-unsigned int Grid::GetWidth() const
-{
-	return m_uiWidth;
-}
-
-unsigned int Grid::GetHeight() const
-{
-	return m_uiHeight;
-}
-
 ivec2 Grid::GetDir(char c) const
 {
 	ivec2 headDir;
@@ -284,6 +215,70 @@ bool Grid::IsWriggler(char c) const
 {
 	return (c == '^' || c == 'v' || c == '<' || c == '>' || IsHead(c) || IsTail(c));
 }
+
+bool Grid::IsValid(const uvec2 &pos) const
+{
+	if(pos.x >= m_uiWidth || pos.y >= m_uiHeight)
+		return false;
+
+	char tile = m_grid[pos.y][pos.x];
+	return (!IsWriggler(tile) && (tile != 'x'));
+}
+
+void Grid::ClearPos(const uvec2 &pos)
+{
+	m_grid[pos.y][pos.x] = 'e';
+}
+
+void Grid::FlipTileDirection(const uvec2 &pos)
+{
+	char& tile = m_grid[pos.y][pos.x];
+	switch(tile)
+	{
+	case 'U':
+		tile = '^';
+		break;
+	case 'D':
+		tile = 'v';
+		break;
+	case 'L':
+		tile = '<';
+		break;
+	case 'R':
+		tile = '>';
+		break;
+	case '^':
+		tile = 'U';
+		break;
+	case 'v':
+		tile = 'D';
+		break;
+	case '<':
+		tile = 'L';
+		break;
+	case '>':
+		tile = 'R';
+		break;
+	default:
+		assert(false);
+	}
+}
+
+void Grid::SetWrigglerTail(const uvec2 &pos, int id)
+{
+	m_grid[pos.y][pos.x] = id + 48;
+}
+
+void Grid::SetWrigglerHead(const uvec2& newPos, Direction dir)
+{
+	m_grid[newPos.y][newPos.x] = FLIPED_HEAD_DIRECTION[dir];
+}
+
+void Grid::SetWrigglerDirection(const uvec2 &pos, Direction dir)
+{
+	m_grid[pos.y][pos.x] = INTERNAL_DIRECTION[dir];
+}
+
 
 std::ostream& operator <<(std::ostream& stream, const Grid& g)
 {
