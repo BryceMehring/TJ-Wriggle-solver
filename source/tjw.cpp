@@ -1,4 +1,4 @@
-#include "grid.h"
+#include "test.h"
 #include <iostream>
 #include <cassert>
 
@@ -9,16 +9,19 @@ int main(int n, char** cmd)
 	if(n < 2)
 	{
 		cout << "Invalid number of command line arguments" << endl;
+		return 1;
 	}
 
+	srand(time(0));
+
 	const char* file = cmd[1];
-	Grid myGrid;
+	TestGrid myGrid;
 
 	assert(myGrid.Load(file));
 
 	myGrid.RunAI();
 
-	cout << myGrid;
+	cout << myGrid << endl;
 
 	return 0;
 }
