@@ -21,7 +21,7 @@ int main(int n, char** cmd)
 
 	myGrid.RunAI();
 
-	cout << myGrid << endl;
+	//cout << myGrid << endl;
 
 	return 0;
 }

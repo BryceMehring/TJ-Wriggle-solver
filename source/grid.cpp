@@ -41,6 +41,26 @@ static const char INTERNAL_DIRECTION[] =
 	'>'
 };
 
+bool operator==(const uvec2& a, const uvec2& b)
+{
+	return ((a.x == b.x) && (a.y == b.y));
+}
+
+bool operator!=(const uvec2& a, const uvec2& b)
+{
+	return !::operator==(a,b);
+}
+
+bool operator==(const Wriggler& a, const Wriggler& b)
+{
+	return ((a.id == b.id) && (a.positons == b.positons));
+}
+
+bool operator!=(const Wriggler& a, const Wriggler& b)
+{
+	return !::operator==(a,b);
+}
+
 
 Grid::Grid() : m_uiWidth(0), m_uiHeight(0)
 {
@@ -62,10 +82,10 @@ bool Grid::Load(const std::string &file)
 	return Load(inFile);
 }
 
-bool Grid::MoveWriggler(unsigned int id, bool bHead, Direction dir)
+bool Grid::CanMoveWriggler(unsigned int id, bool bHead, Direction dir) const
 {
-	bool bMoved = false;
-	Wriggler& wriggler = m_wrigglers[id];
+	bool bCanMove = false;
+	const Wriggler& wriggler = m_wrigglers[id];
 	if(!wriggler.positons.empty())
 	{
 		uvec2 newPos = bHead ? wriggler.positons.front() : wriggler.positons.back();
@@ -75,34 +95,50 @@ bool Grid::MoveWriggler(unsigned int id, bool bHead, Direction dir)
 
 		if(IsValid(newPos))
 		{
-			if(bHead)
-			{
-				ClearPos(wriggler.positons.back());
-				FlipTileDirection(wriggler.positons.front());
-
-				wriggler.positons.pop_back();
-				wriggler.positons.push_front(newPos);
-
-				SetWrigglerTail(wriggler.positons.back(),wriggler.id);
-				SetWrigglerHead(newPos,dir);
-			}
-			else
-			{
-				ClearPos(wriggler.positons.front());
-				SetWrigglerDirection(wriggler.positons.back(),dir);
-
-				wriggler.positons.pop_front();
-				wriggler.positons.push_back(newPos);
-
-				FlipTileDirection(wriggler.positons.front());
-				SetWrigglerTail(newPos,wriggler.id);
-			}
-
-			bMoved = true;
+			bCanMove = true;
 		}
 	}
 
-	return bMoved;
+	return bCanMove;
+}
+
+bool Grid::MoveWriggler(unsigned int id, bool bHead, Direction dir)
+{
+	if(CanMoveWriggler(id, bHead, dir))
+	{
+		Wriggler& wriggler = m_wrigglers[id];
+		uvec2 newPos = bHead ? wriggler.positons.front() : wriggler.positons.back();
+
+		newPos.x += DIRECTIONS[dir].x;
+		newPos.y += DIRECTIONS[dir].y;
+
+		if(bHead)
+		{
+			ClearPos(wriggler.positons.back());
+			FlipTileDirection(wriggler.positons.front());
+
+			wriggler.positons.pop_back();
+			wriggler.positons.push_front(newPos);
+
+			SetWrigglerTail(wriggler.positons.back(),wriggler.id);
+			SetWrigglerHead(newPos,dir);
+		}
+		else
+		{
+			ClearPos(wriggler.positons.front());
+			SetWrigglerDirection(wriggler.positons.back(),dir);
+
+			wriggler.positons.pop_front();
+			wriggler.positons.push_back(newPos);
+
+			FlipTileDirection(wriggler.positons.front());
+			SetWrigglerTail(newPos,wriggler.id);
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 unsigned int Grid::GetNumWrigglers() const
@@ -152,7 +188,7 @@ bool Grid::Load(std::istream &stream)
 
 		for(uvec2 pos : wrigglers)
 		{
-			std::list<uvec2> positions;
+			std::deque<uvec2> positions;
 			positions.push_back(pos);
 
 			while(!IsTail(m_grid[pos.y][pos.x]))

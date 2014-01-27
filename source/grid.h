@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <list>
+#include <deque>
 
 enum Direction
 {
@@ -25,10 +25,36 @@ struct uvec2
 	unsigned int y;
 };
 
+bool operator==(const uvec2& a, const uvec2& b);
+bool operator!=(const uvec2& a, const uvec2& b);
+
 struct Wriggler
 {
-	std::list<uvec2> positons;
+	std::deque<uvec2> positons;
 	unsigned int id;
+};
+
+bool operator==(const Wriggler& a, const Wriggler& b);
+bool operator!=(const Wriggler& a, const Wriggler& b);
+
+class WrigglerHash
+{
+public:
+
+	std::size_t operator()(const Wriggler& a) const
+	{
+		const unsigned int p1 = 73856093;
+		const unsigned int p2 = 83492791;
+		std::size_t h = 1427;
+		for(auto iter : a.positons)
+		{
+			h += ((iter.x * p1) ^ (iter.y * p2));
+		}
+
+		h += std::hash<unsigned int>()(a.id);
+
+		return h;
+	}
 };
 
 // Defines a grid for TJ-wriggle puzzles which stores the location of all the objects
@@ -47,6 +73,8 @@ public:
 	// Loads puzzle description from the specified file
 	// The old state of the grid is discared
 	bool Load(const std::string& file);
+
+	bool CanMoveWriggler(unsigned int id, bool bHead, Direction dir) const;
 
 	// Moves a wriggler. Returns true if the move is valid, false otherwise
 	// id: id of the wriggler

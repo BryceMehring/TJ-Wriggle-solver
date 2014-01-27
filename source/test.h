@@ -13,6 +13,8 @@ public:
 
 private:
 
+	void GenerateGraph(unsigned int w, unsigned int h, unsigned int d, unsigned int& counter);
+
 };
 
 #endif // _TEST_

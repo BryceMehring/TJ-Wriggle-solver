@@ -25,7 +25,7 @@ void TestGrid::GenerateGraph(unsigned int w, unsigned int h, unsigned int d, uns
 	// For all 8 different possibilies for each wriggler at its current location
 	//		If moving in this direction can be done,
 	//			Add the move to the stack along with the current indicies(I need to check this out a bit more)
-	// Unmove the wriggler
+	//	Unmove the wriggler
 
 	static std::unordered_set<Wriggler, WrigglerHash> mySet;
 
