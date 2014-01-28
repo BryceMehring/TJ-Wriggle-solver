@@ -37,6 +37,7 @@ struct Wriggler
 bool operator==(const Wriggler& a, const Wriggler& b);
 bool operator!=(const Wriggler& a, const Wriggler& b);
 
+// Defines a hash function for a wriggler
 class WrigglerHash
 {
 public:
@@ -74,6 +75,10 @@ public:
 	// The old state of the grid is discared
 	bool Load(const std::string& file);
 
+	// Returns true if the wriggler at index id can move from the head specified by bHead in the direction specified by dir
+	// id: id of the wriggler
+	// bHead: true if moving the head, false if moving the tail
+	// dir: the direction that the wriggler will move in
 	bool CanMoveWriggler(unsigned int id, bool bHead, Direction dir) const;
 
 	// Moves a wriggler. Returns true if the move is valid, false otherwise
@@ -114,8 +119,16 @@ protected:
 	// Loads the grid from the specified stream and returns true if successful, false otherwise
 	bool Load(std::istream& stream);
 
+	// Returns the direction that the wriggler will move away from, the opposite side of the wriggler that is set to move
+	// w: index of the wriggler
+	// bHead: true to move the head, false to move the tail
+	Direction GetGetWrigglerTailDir(unsigned int w, bool bHead);
+
 	// Returns the direction specified by the current tile character c in array space, which can either be 'U', '^', 'D', 'v', 'L', '<', 'R', '>'
-	ivec2 GetDir(char c) const;
+	ivec2 GetDirVector(char c) const;
+
+	// Returns the direction specified by the current tile character c,  which can either be 'U', '^', 'D', 'v', 'L', '<', 'R', '>'
+	Direction GetDir(char c) const;
 
 	// Returns true if c is the head of a wriggler, false otherwise
 	bool IsHead(char c) const;
@@ -123,7 +136,7 @@ protected:
 	// Returns true is c is the tail of a wriggler, false otherwise
 	bool IsTail(char c) const;
 
-	// Returns true if c is part of a wriggler, false otherwise
+	// Returns true if c is part of a wriggler(head, tail, or internal section), false otherwise
 	bool IsWriggler(char c) const;
 
 	// Returns true is pos is a valid position to move to, false otherwise
@@ -145,7 +158,7 @@ private:
 	// Sets the tail of the wriggler
 	// pos: the position of the wriggler's tail
 	// id: id of the wriggler
-	void SetWrigglerTail(const uvec2& pos, int id);
+	void SetWrigglerTail(const uvec2& pos, unsigned int id);
 
 	// Sets the direction of the head of the wriggler
 	// pos: the position of the head
@@ -157,6 +170,7 @@ private:
 	// dir: direction of the wriggler
 	void SetWrigglerDirection(const uvec2& pos, Direction dir);
 
+	// Grid I/O
 	friend std::ostream& operator <<(std::ostream& stream, const Grid&);
 	friend std::istream& operator >>(std::istream& stream, Grid&);
 };

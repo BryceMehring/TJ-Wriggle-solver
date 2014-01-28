@@ -170,6 +170,7 @@ bool Grid::Load(std::istream &stream)
 		std::vector<uvec2> wrigglers(numWrigglers);
 		m_wrigglers.reserve(numWrigglers);
 
+		// Read all the lines from the files into the grid and store the location of the heads of all of the wrigglers
 		unsigned int wrigglerIndex = 0;
 		for(unsigned int i = 0; i < m_uiHeight; ++i)
 		{
@@ -186,6 +187,7 @@ bool Grid::Load(std::istream &stream)
 			}
 		}
 
+		// Construct all the wrigglers with their paths and id
 		for(uvec2 pos : wrigglers)
 		{
 			std::deque<uvec2> positions;
@@ -193,7 +195,7 @@ bool Grid::Load(std::istream &stream)
 
 			while(!IsTail(m_grid[pos.y][pos.x]))
 			{
-				ivec2 dir = GetDir(m_grid[pos.y][pos.x]);
+				ivec2 dir = GetDirVector(m_grid[pos.y][pos.x]);
 				pos.x += dir.x;
 				pos.y += dir.y;
 
@@ -202,39 +204,70 @@ bool Grid::Load(std::istream &stream)
 				positions.push_back(pos);
 			}
 
-			m_wrigglers.push_back({std::move(positions), static_cast<unsigned int>(m_wrigglers.size())});
+			m_wrigglers.push_back({std::move(positions), (unsigned int)m_grid[pos.y][pos.x] - 48});
 		}
 	}
 
 	return stream;
 }
 
-ivec2 Grid::GetDir(char c) const
+Direction Grid::GetGetWrigglerTailDir(unsigned int w, bool bHead)
 {
-	ivec2 headDir;
+	// All wrigglers must have a length of at least two for this algorithm to work
+	assert(m_wrigglers[w].positons.size() < 2);
+
+	uvec2 tail = bHead ? m_wrigglers[w].positons.back() : m_wrigglers[w].positons.front();
+	uvec2 next = bHead ? m_wrigglers[w].positons[m_wrigglers[w].positons.size() - 2] : m_wrigglers[w].positons[1];
+
+	if(next.x > tail.x)
+	{
+		return Left;
+	}
+	else if(next.x < tail.x)
+	{
+		return Right;
+	}
+	else if(next.y > tail.y)
+	{
+		return Up;
+	}
+	else
+	{
+		return Down;
+	}
+}
+
+ivec2 Grid::GetDirVector(char c) const
+{
+	return DIRECTIONS[GetDir(c)];
+}
+
+Direction Grid::GetDir(char c) const
+{
+	Direction dir;
 	switch(c)
 	{
 	case 'U':
 	case '^':
-		headDir = {0,-1};
+		dir = Up;
 		break;
 	case 'D':
 	case 'v':
-		headDir = {0,1};
+		dir = Down;
 		break;
 	case 'L':
 	case '<':
-		headDir = {-1,0};
+		dir = Left;
 		break;
 	case 'R':
 	case '>':
-		headDir = {1,0};
+		dir = Right;
 		break;
 	default:
 		assert(false);
 	}
 
-	return headDir;
+	return dir;
 }
 
 bool Grid::IsHead(char c) const
@@ -254,11 +287,7 @@ bool Grid::IsWriggler(char c) const
 
 bool Grid::IsValid(const uvec2 &pos) const
 {
-	if(pos.x >= m_uiWidth || pos.y >= m_uiHeight)
-		return false;
-
-	char tile = m_grid[pos.y][pos.x];
-	return (!IsWriggler(tile) && (tile != 'x'));
+	return ((pos.x < m_uiWidth) && (pos.y < m_uiHeight) && (m_grid[pos.y][pos.x] == 'e'));
 }
 
 void Grid::ClearPos(const uvec2 &pos)
@@ -300,7 +329,7 @@ void Grid::FlipTileDirection(const uvec2 &pos)
 	}
 }
 
-void Grid::SetWrigglerTail(const uvec2 &pos, int id)
+void Grid::SetWrigglerTail(const uvec2 &pos, unsigned int id)
 {
 	m_grid[pos.y][pos.x] = id + 48;
 }
@@ -314,7 +343,6 @@ void Grid::SetWrigglerDirection(const uvec2 &pos, Direction dir)
 {
 	m_grid[pos.y][pos.x] = INTERNAL_DIRECTION[dir];
 }
-
 
 std::ostream& operator <<(std::ostream& stream, const Grid& g)
 {
