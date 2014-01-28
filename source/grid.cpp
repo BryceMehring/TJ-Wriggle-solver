@@ -214,7 +214,7 @@ bool Grid::Load(std::istream &stream)
 Direction Grid::GetGetWrigglerTailDir(unsigned int w, bool bHead)
 {
 	// All wrigglers must have a length of at least two for this algorithm to work
-	assert(m_wrigglers[w].positons.size() < 2);
+	assert(m_wrigglers[w].positons.size() >= 2);
 
 	uvec2 tail = bHead ? m_wrigglers[w].positons.back() : m_wrigglers[w].positons.front();
 	uvec2 next = bHead ? m_wrigglers[w].positons[m_wrigglers[w].positons.size() - 2] : m_wrigglers[w].positons[1];
