@@ -38,17 +38,17 @@ public:
 		m_pRoot = pNode;
 	}
 
-	// Apply's breath first search to the tree and then return the result
+	// Apply's breadth first search to the tree and then return the result
 	// F: Final state test functor which accepts a reference to T and returns a boolean.
 	// True if this is the final state, false otherwise
 	template< class F >
-	std::list<T*> BreathFirstSearch(const F& finalStateFunctor)
+	std::list<T*> BreadthFirstSearch(const F& finalStateFunctor)
 	{
 		T* pFinalState = nullptr;
 		std::queue<T*> frontier;
 		frontier.push(m_pRoot);
 
-		while(!frontier.empty())
+		while((pFinalState == nullptr) && (!frontier.empty()))
 		{
 			T* pTop = frontier.front();
 			frontier.pop();
@@ -56,12 +56,13 @@ public:
 			if(finalStateFunctor(*pTop))
 			{
 				pFinalState = pTop;
-				break;
 			}
-
-			for(auto iter : pTop->nodes)
+			else
 			{
-				frontier.push(iter);
+				for(auto iter : pTop->nodes)
+				{
+					frontier.push(iter);
+				}
 			}
 		}
 
