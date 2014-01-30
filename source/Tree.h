@@ -12,6 +12,10 @@ class Tree
 {
 public:
 
+	Tree()
+	{
+	}
+
 	// Deletes all of the nodes
 	~Tree()
 	{
@@ -80,6 +84,11 @@ private:
 
 	std::vector<T*> m_nodes;
 	T* m_pRoot;
+
+	// This class cannot be copied
+	Tree(const Tree&) = delete;
+	Tree& operator=(const Tree&) = delete;
+
 };
 
 #endif // _TREE_
