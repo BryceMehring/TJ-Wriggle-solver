@@ -15,8 +15,9 @@ struct Move
 struct Node
 {
 	std::vector<Node*> nodes;
-	std::deque<uvec2> positions;
 	Node* pPrevious;
+	uvec2 head;
+	uvec2 tail;
 	Move move;
 };
 

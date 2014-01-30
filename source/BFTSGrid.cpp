@@ -44,17 +44,13 @@ void BFTSGrid::RunAI()
 	m_tree.BreadthFirstSearch(path,[this](const Node& n) -> bool
 	{
 		bool bFoundFinalState = false;
-		if(!n.positions.empty())
+
+		if(m_wrigglers[n.move.w].id == 0)
 		{
-			if(m_wrigglers[n.move.w].id == 0)
+			uvec2 finalPos = {m_uiWidth - 1, m_uiHeight - 1};
+			if(n.head == finalPos || n.tail == finalPos)
 			{
-				uvec2 start = n.positions.front();
-				uvec2 end = n.positions.back();
-				uvec2 finalPos = {m_uiWidth - 1, m_uiHeight - 1};
-				if(start == finalPos || end == finalPos)
-				{
-					bFoundFinalState = true;
-				}
+				bFoundFinalState = true;
 			}
 		}
 
@@ -65,10 +61,12 @@ void BFTSGrid::RunAI()
 	{
 		path.pop_front();
 
-		for(auto iter : path)
+		for(Node* pNode : path)
 		{
-			cout << m_wrigglers[iter->move.w].id << " " << iter->move.h << " " << iter->move.d << endl;
-			MoveWriggler(iter->move.w,iter->move.h,(Direction)iter->move.d);
+			uvec2 pos = pNode->move.h ? pNode->head : pNode->tail;
+			cout << m_wrigglers[pNode->move.w].id << " " << pNode->move.h << " " << pos.x << " " << pos.y << endl;
+
+			MoveWriggler(pNode->move.w,pNode->move.h,(Direction)pNode->move.d);
 		}
 	}
 
@@ -109,7 +107,8 @@ void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedLis
 						auto* pNewNode = new Node();
 						pNewNode->pPrevious = pTree;
 						pNewNode->move = {w,h,d};
-						pNewNode->positions = m_wrigglers[w].positions;
+						pNewNode->head = m_wrigglers[w].positions.front();
+						pNewNode->tail = m_wrigglers[w].positions.back();
 						pNewNode->pPrevious->nodes.push_back(pNewNode);
 
 						m_tree.AddNode(pNewNode);
