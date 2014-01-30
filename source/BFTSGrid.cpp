@@ -70,7 +70,7 @@ void BFTSGrid::RunAI()
 		}
 	}
 
-	cout << *this << endl;
+	cout << *this;
 	cout << theTimer.GetTime() << endl;
 
 	cout << path.size() << endl;
