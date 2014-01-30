@@ -66,9 +66,6 @@ public:
 	// Builds an empty grid
 	Grid();
 
-	// Loads puzzle description from the specified file
-	Grid(const std::string& file);
-
 	virtual ~Grid() {}
 
 	// Loads puzzle description from the specified file
@@ -101,28 +98,18 @@ public:
 
 protected:
 
-	// Grid containing all of the tiles
-	std::vector<std::vector<char>> m_grid;
-
-	// List containing all of the wriglers
-	std::vector<Wriggler> m_wrigglers;
-
-	// Width and height of the grid
-	unsigned int m_uiWidth;
-	unsigned int m_uiHeight;
-
-	static const ivec2 s_adjacentTiles[];
-
-	// Constructs a grid from the specified stream and returns true if successful, false otherwise
-	Grid(std::istream& stream);
-
-	// Loads the grid from the specified stream and returns true if successful, false otherwise
-	bool Load(std::istream& stream);
-
 	// Returns the direction that the wriggler will move away from, the opposite side of the wriggler that is set to move
 	// w: index of the wriggler
 	// bHead: true to move the head, false to move the tail
 	Direction GetGetWrigglerTailDir(unsigned int w, bool bHead);
+
+private:
+
+	// Loads the grid from the specified stream and returns true if successful, false otherwise
+	bool Load(std::istream& stream);
+
+	// Fills the grid from the file and returns the location of all the heads of the wrigglers
+	std::vector<uvec2> GenerateGrid(std::istream &stream);
 
 	// Returns the direction specified by the current tile character c in array space, which can either be 'U', '^', 'D', 'v', 'L', '<', 'R', '>'
 	ivec2 GetDirVector(char c) const;
@@ -136,16 +123,8 @@ protected:
 	// Returns true is c is the tail of a wriggler, false otherwise
 	bool IsTail(char c) const;
 
-	// Returns true if c is part of a wriggler(head, tail, or internal section), false otherwise
-	bool IsWriggler(char c) const;
-
 	// Returns true is pos is a valid position to move to, false otherwise
 	bool IsValid(const uvec2& pos) const;
-
-private:
-
-	// Fills the grid from the file and returns the location of all the heads of the wrigglers
-	std::vector<uvec2> LoadFile(std::istream &stream);
 
 	// Sets the position specified by pos to empty
 	void ClearPos(const uvec2& pos);
@@ -176,6 +155,20 @@ private:
 	// Grid I/O
 	friend std::ostream& operator <<(std::ostream& stream, const Grid&);
 	friend std::istream& operator >>(std::istream& stream, Grid&);
+
+protected:
+
+	// Grid containing all of the tiles
+	std::vector<std::vector<char>> m_grid;
+
+	// List containing all of the wriglers
+	std::vector<Wriggler> m_wrigglers;
+
+	// Width and height of the grid
+	unsigned int m_uiWidth;
+	unsigned int m_uiHeight;
+
+	static const ivec2 s_adjacentTiles[];
 };
 
 std::ostream& operator <<(std::ostream& stream, const Grid&);

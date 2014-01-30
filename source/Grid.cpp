@@ -65,21 +65,6 @@ Grid::Grid() : m_uiWidth(0), m_uiHeight(0)
 {
 }
 
-Grid::Grid(const std::string &file)
-{
-	std::ifstream inFile(file);
-	if(!Load(inFile))
-	{
-		throw std::string("Cannot open " + file);
-	}
-}
-
-
-Grid::Grid(std::istream &file)
-{
-	Load(file);
-}
-
 bool Grid::Load(const std::string &file)
 {
 	std::ifstream inFile(file);
@@ -160,34 +145,6 @@ unsigned int Grid::GetHeight() const
 	return m_uiHeight;
 }
 
-bool Grid::Load(std::istream &stream)
-{
-	std::vector<uvec2> wrigglers = LoadFile(stream);
-
-	m_wrigglers.clear();
-
-	// Construct all the wrigglers with their paths and id
-	for(uvec2 pos : wrigglers)
-	{
-		std::deque<uvec2> positions;
-		positions.push_back(pos);
-
-		while(!IsTail(m_grid[pos.y][pos.x]))
-		{
-			ivec2 dir = GetDirVector(m_grid[pos.y][pos.x]);
-			pos.x += dir.x;
-			pos.y += dir.y;
-
-			assert(pos.x < GetWidth() && pos.y < GetHeight());
-
-			positions.push_back(pos);
-		}
-
-		m_wrigglers.push_back({std::move(positions), (unsigned int)m_grid[pos.y][pos.x] - 48});
-	}
-
-	return wrigglers.empty() == false;
-}
 
 Direction Grid::GetGetWrigglerTailDir(unsigned int w, bool bHead)
 {
@@ -214,6 +171,70 @@ Direction Grid::GetGetWrigglerTailDir(unsigned int w, bool bHead)
 		return Down;
 	}
 }
+
+bool Grid::Load(std::istream &stream)
+{
+	std::vector<uvec2> wrigglers = GenerateGrid(stream);
+
+	m_wrigglers.clear();
+
+	// Construct all the wrigglers with their paths and id
+	for(uvec2 pos : wrigglers)
+	{
+		std::deque<uvec2> positions;
+		positions.push_back(pos);
+
+		while(!IsTail(m_grid[pos.y][pos.x]))
+		{
+			ivec2 dir = GetDirVector(m_grid[pos.y][pos.x]);
+			pos.x += dir.x;
+			pos.y += dir.y;
+
+			assert(pos.x < GetWidth() && pos.y < GetHeight());
+
+			positions.push_back(pos);
+		}
+
+		m_wrigglers.push_back({std::move(positions), (unsigned int)m_grid[pos.y][pos.x] - 48});
+	}
+
+	return wrigglers.empty() == false;
+}
+
+std::vector<uvec2> Grid::GenerateGrid(std::istream &stream)
+{
+	std::vector<uvec2> wrigglers;
+
+	if(stream)
+	{
+		unsigned int numWrigglers = 0;
+
+		stream >> m_uiWidth >> m_uiHeight;
+		stream >> numWrigglers;
+
+		wrigglers.reserve(numWrigglers);
+
+		m_grid.resize(m_uiHeight);
+
+		// Read all the lines from the files into the grid and store the location of the heads of all of the wrigglers
+		for(unsigned int i = 0; i < m_uiHeight; ++i)
+		{
+			m_grid[i].resize(m_uiWidth);
+			for(unsigned int j = 0; j < m_uiWidth; ++j)
+			{
+				stream >> m_grid[i][j];
+
+				if(IsHead(m_grid[i][j]))
+				{
+					wrigglers.push_back({j, i});
+				}
+			}
+		}
+	}
+
+	return wrigglers;
+}
+
 
 ivec2 Grid::GetDirVector(char c) const
 {
@@ -258,49 +279,9 @@ bool Grid::IsTail(char c) const
 	return std::isdigit(c);
 }
 
-bool Grid::IsWriggler(char c) const
-{
-	return (c == '^' || c == 'v' || c == '<' || c == '>' || IsHead(c) || IsTail(c));
-}
-
 bool Grid::IsValid(const uvec2 &pos) const
 {
 	return ((pos.x < m_uiWidth) && (pos.y < m_uiHeight) && (m_grid[pos.y][pos.x] == 'e'));
-}
-
-
-std::vector<uvec2> Grid::LoadFile(std::istream &stream)
-{
-	std::vector<uvec2> wrigglers;
-
-	if(stream)
-	{
-		unsigned int numWrigglers = 0;
-
-		stream >> m_uiWidth >> m_uiHeight;
-		stream >> numWrigglers;
-
-		wrigglers.reserve(numWrigglers);
-
-		m_grid.resize(m_uiHeight);
-
-		// Read all the lines from the files into the grid and store the location of the heads of all of the wrigglers
-		for(unsigned int i = 0; i < m_uiHeight; ++i)
-		{
-			m_grid[i].resize(m_uiWidth);
-			for(unsigned int j = 0; j < m_uiWidth; ++j)
-			{
-				stream >> m_grid[i][j];
-
-				if(IsHead(m_grid[i][j]))
-				{
-					wrigglers.push_back({j, i});
-				}
-			}
-		}
-	}
-
-	return wrigglers;
 }
 
 void Grid::ClearPos(const uvec2 &pos)
