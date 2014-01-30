@@ -12,16 +12,21 @@ int main(int n, char** cmd)
 		return 1;
 	}
 
-	srand(time(0));
-
 	const char* file = cmd[1];
-	TestGrid myGrid;
 
-	assert(myGrid.Load(file));
-
-	myGrid.RunAI();
-
-	//cout << myGrid << endl;
+	try
+	{
+		TestGrid myGrid(file);
+		myGrid.RunAI();
+	}
+	catch(std::exception& exc)
+	{
+		cout << exc.what() << endl;
+	}
+	catch(std::string error)
+	{
+		cout << error << endl;
+	}
 
 	return 0;
 }

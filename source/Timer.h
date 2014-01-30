@@ -33,10 +33,10 @@ private:
 	void PollCounter(std::chrono::high_resolution_clock::time_point& Out);
 
 private:
-	bool m_bActive;
 	std::chrono::high_resolution_clock::time_point m_start;
 	std::chrono::high_resolution_clock::time_point m_end;
+	bool m_bActive;
 }; // class Timer
 
 
-#endif
+#endif // _TIMER_H_

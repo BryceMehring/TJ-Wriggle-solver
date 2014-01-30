@@ -30,7 +30,7 @@ bool operator!=(const uvec2& a, const uvec2& b);
 
 struct Wriggler
 {
-	std::deque<uvec2> positons;
+	std::deque<uvec2> positions;
 	unsigned int id;
 };
 
@@ -47,7 +47,7 @@ public:
 		const unsigned int p1 = 73856093;
 		const unsigned int p2 = 83492791;
 		std::size_t h = 1427;
-		for(auto iter : a.positons)
+		for(auto iter : a.positions)
 		{
 			h += ((iter.x * p1) ^ (iter.y * p2));
 		}
@@ -72,7 +72,7 @@ public:
 	virtual ~Grid() {}
 
 	// Loads puzzle description from the specified file
-	// The old state of the grid is discared
+	// The old state of the grid is discarded
 	bool Load(const std::string& file);
 
 	// Returns true if the wriggler at index id can move from the head specified by bHead in the direction specified by dir
@@ -143,6 +143,9 @@ protected:
 	bool IsValid(const uvec2& pos) const;
 
 private:
+
+	// Fills the grid from the file and returns the location of all the heads of the wrigglers
+	std::vector<uvec2> LoadFile(std::istream &stream);
 
 	// Sets the position specified by pos to empty
 	void ClearPos(const uvec2& pos);
