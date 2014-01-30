@@ -12,7 +12,7 @@ class Tree
 {
 public:
 
-	Tree()
+	Tree() : m_pRoot(nullptr)
 	{
 	}
 
