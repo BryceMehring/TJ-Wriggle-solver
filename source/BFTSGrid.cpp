@@ -11,7 +11,10 @@ BFTSGrid::BFTSGrid()
 
 BFTSGrid::BFTSGrid(const string &file)
 {
-	Load(file);
+	if(!Load(file))
+	{
+		throw std::string("Cannot open " + file);
+	}
 }
 
 bool BFTSGrid::Load(const string &file)

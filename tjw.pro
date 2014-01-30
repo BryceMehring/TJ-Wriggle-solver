@@ -8,7 +8,7 @@ SOURCES = source/BFTSGrid.cpp \
 		  source/Timer.cpp \
 		  source/Tjw.cpp
 
-QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS += -std=c++0x -pedantic
 QT     -= gui core
 LIBS   -= -lQtGui -lQtCore
 
