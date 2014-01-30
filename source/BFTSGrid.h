@@ -8,8 +8,8 @@
 struct Move
 {
 	unsigned int w;
-	unsigned int h;
-	unsigned int d;
+	bool h;
+	Direction d;
 };
 
 struct Node

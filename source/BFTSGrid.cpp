@@ -66,7 +66,7 @@ void BFTSGrid::RunAI()
 			uvec2 pos = pNode->move.h ? pNode->head : pNode->tail;
 			cout << m_wrigglers[pNode->move.w].id << " " << pNode->move.h << " " << pos.x << " " << pos.y << endl;
 
-			MoveWriggler(pNode->move.w,pNode->move.h,(Direction)pNode->move.d);
+			MoveWriggler(pNode->move.w,pNode->move.h,pNode->move.d);
 		}
 	}
 
@@ -92,13 +92,13 @@ void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedLis
 	for(unsigned int w = 0; w < GetNumWrigglers(); ++w)
 	{
 		// Try to move in all four directions
-		for(unsigned int d = 0; d < 4; ++d)
+		for(Direction d : {Up, Down, Left, Right})
 		{
 			// Try to move the head and the tail
-			for(unsigned int h = 0; h < 2; ++h)
+			for(bool h : {true, false})
 			{
 				Direction dir = GetGetWrigglerTailDir(w,h);
-				if(MoveWriggler(w,h,(Direction)d))
+				if(MoveWriggler(w,h,d))
 				{
 					bool bProcessOnce = closedList.insert(m_wrigglers[w]).second;
 
