@@ -1,20 +1,20 @@
-#include "test.h"
+#include "BFTSGrid.h"
 #include "Timer.h"
 #include <iostream>
 #include <cassert>
 
 using namespace std;
 
-TestGrid::TestGrid()
+BFTSGrid::BFTSGrid()
 {
 }
 
-TestGrid::TestGrid(const string &file)
+BFTSGrid::BFTSGrid(const string &file)
 {
 	Load(file);
 }
 
-bool TestGrid::Load(const string &file)
+bool BFTSGrid::Load(const string &file)
 {
 	bool bSuccess = Grid::Load(file);
 	if(bSuccess)
@@ -32,7 +32,7 @@ bool TestGrid::Load(const string &file)
 	return bSuccess;
 }
 
-void TestGrid::RunAI()
+void BFTSGrid::RunAI()
 {
 	Timer theTimer;
 	theTimer.Start();
@@ -67,16 +67,17 @@ void TestGrid::RunAI()
 			cout << m_wrigglers[iter->move.w].id << " " << iter->move.h << " " << iter->move.d << endl;
 			MoveWriggler(iter->move.w,iter->move.h,(Direction)iter->move.d);
 		}
-
-		cout << *this << endl;
-		cout << theTimer.GetTime() << endl;
-
-		cout << path.size() << endl;
-		cout << m_tree.Size() << endl;
 	}
+
+	cout << *this << endl;
+	cout << theTimer.GetTime() << endl;
+
+	cout << path.size() << endl;
+	cout << m_tree.Size() << endl;
+
 }
 
-void TestGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedList, Node *pTree)
+void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedList, Node *pTree)
 {
 	// GenerateTree()
 	// Try to move the wriggler in 8 different directions, 4 for the head and the tail

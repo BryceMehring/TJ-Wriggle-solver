@@ -1,7 +1,7 @@
-#ifndef _TEST_
-#define _TEST_
+#ifndef _BFTS_GRID_
+#define _BFTS_GRID_
 
-#include "grid.h"
+#include "Grid.h"
 #include "Tree.h"
 #include <unordered_set>
 
@@ -20,12 +20,12 @@ struct Node
 	Move move;
 };
 
-class TestGrid : public Grid
+class BFTSGrid : public Grid
 {
 public:
 
-	TestGrid();
-	TestGrid(const std::string& file);
+	BFTSGrid();
+	BFTSGrid(const std::string& file);
 
 	// Loads puzzle description from the specified file
 	// The old state of the grid is discared
@@ -41,4 +41,4 @@ private:
 
 };
 
-#endif // _TEST_
+#endif // _BFTS_GRID_

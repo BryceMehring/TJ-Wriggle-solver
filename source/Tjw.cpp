@@ -1,4 +1,4 @@
-#include "test.h"
+#include "BFTSGrid.h"
 #include <iostream>
 #include <cassert>
 
@@ -16,7 +16,7 @@ int main(int n, char** cmd)
 
 	try
 	{
-		TestGrid myGrid(file);
+		BFTSGrid myGrid(file);
 		myGrid.RunAI();
 	}
 	catch(std::exception& exc)
