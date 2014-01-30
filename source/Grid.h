@@ -10,7 +10,7 @@ enum Direction
 	Up,
 	Down,
 	Left,
-	Right,
+	Right
 };
 
 struct ivec2
