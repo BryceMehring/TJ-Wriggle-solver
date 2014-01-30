@@ -9,13 +9,13 @@ int main(int n, char** cmd)
 	if(n < 2)
 	{
 		cout << "Invalid number of command line arguments" << endl;
+		cout << "Example usage: ./tjw puzzle.txt" << endl;
 		return 1;
 	}
 
-	const char* file = cmd[1];
-
 	try
 	{
+		const char* file = cmd[1];
 		BFTSGrid myGrid(file);
 		myGrid.RunAI();
 	}
