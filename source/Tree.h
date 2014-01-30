@@ -16,13 +16,10 @@ public:
 	{
 	}
 
-	// Deletes all of the nodes
+	// Clears the tree
 	~Tree()
 	{
-		for(T* p : m_nodes)
-		{
-			delete p;
-		}
+		Clear();
 	}
 
 	unsigned int Size() const
@@ -42,12 +39,24 @@ public:
 		m_pRoot = pNode;
 	}
 
+	// Deletes all of the nodes
+	void Clear()
+	{
+		for(T* p : m_nodes)
+		{
+			delete p;
+		}
+	}
+
 	// Apply's breadth first search to the tree and then return the result
 	// F: Final state test functor which accepts a reference to T and returns a boolean.
 	// True if this is the final state, false otherwise
 	template< class F >
-	std::list<T*> BreadthFirstSearch(const F& finalStateFunctor)
+	void BreadthFirstSearch(std::list<T*>& path, const F& finalStateFunctor)
 	{
+		if(m_pRoot == nullptr)
+			return;
+
 		T* pFinalState = nullptr;
 		std::queue<T*> frontier;
 		frontier.push(m_pRoot);
@@ -70,14 +79,11 @@ public:
 			}
 		}
 
-		std::list<T*> path;
 		while(pFinalState != nullptr)
 		{
 			path.push_front(pFinalState);
 			pFinalState = pFinalState->pPrevious;
 		}
-
-		return path;
 	}
 
 private:
