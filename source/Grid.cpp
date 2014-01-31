@@ -73,6 +73,8 @@ bool Grid::Load(const std::string &file)
 
 bool Grid::CanMoveWriggler(unsigned int id, bool bHead, Direction dir) const
 {
+	assert(id < m_wrigglers.size());
+
 	bool bCanMove = false;
 	const Wriggler& wriggler = m_wrigglers[id];
 	if(!wriggler.positions.empty())
