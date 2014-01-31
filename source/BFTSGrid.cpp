@@ -40,6 +40,7 @@ void BFTSGrid::RunAI()
 	Timer theTimer;
 	theTimer.Start();
 
+	// Find a path that will solve the puzzle
 	std::list<Node*> path;
 	m_tree.BreadthFirstSearch(path,[this](const Node& n) -> bool
 	{
@@ -57,17 +58,13 @@ void BFTSGrid::RunAI()
 		return bFoundFinalState;
 	});
 
-	if(!path.empty())
+	// Draw the path that was found
+	for(Node* pNode : path)
 	{
-		path.pop_front();
+		uvec2 pos = pNode->move.h ? pNode->head : pNode->tail;
+		cout << m_wrigglers[pNode->move.w].id << " " << !pNode->move.h << " " << pos.x << " " << pos.y << endl;
 
-		for(Node* pNode : path)
-		{
-			uvec2 pos = pNode->move.h ? pNode->head : pNode->tail;
-			cout << m_wrigglers[pNode->move.w].id << " " << pNode->move.h << " " << pos.x << " " << pos.y << endl;
-
-			MoveWriggler(pNode->move.w,pNode->move.h,pNode->move.d);
-		}
+		MoveWriggler(pNode->move.w,pNode->move.h,pNode->move.d);
 	}
 
 	cout << *this;

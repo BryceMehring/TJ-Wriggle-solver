@@ -79,7 +79,7 @@ public:
 			}
 		}
 
-		while(pFinalState != nullptr)
+		while(pFinalState != nullptr && pFinalState->pPrevious != nullptr)
 		{
 			path.push_front(pFinalState);
 			pFinalState = pFinalState->pPrevious;
