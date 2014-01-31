@@ -5,19 +5,6 @@
 #include "Tree.h"
 #include <unordered_set>
 
-// Defines a movement action for a wriggler
-struct Move
-{
-	// Wriggler index
-	unsigned int w;
-
-	// Bit indicating whether the head is being moved
-	bool h;
-
-	// Direction of movement
-	Direction d;
-};
-
 // Defines a node that is part of a search tree
 struct Node
 {

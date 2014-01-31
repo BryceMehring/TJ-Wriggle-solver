@@ -58,6 +58,19 @@ public:
 	}
 };
 
+// Defines a movement action for a wriggler
+struct Move
+{
+	// Wriggler index
+	unsigned int w;
+
+	// Bit indicating whether the head is being moved
+	bool h;
+
+	// Direction of movement
+	Direction d;
+};
+
 // Defines a grid for TJ-wriggle puzzles which stores the location of all the objects
 class Grid
 {
@@ -72,23 +85,6 @@ public:
 	// The old state of the grid is discarded
 	bool Load(const std::string& file);
 
-	// This method should do all the work to solve the puzzle
-	virtual void RunAI() = 0;
-
-protected:
-
-	// Returns true if the wriggler at index id can move from the head specified by bHead in the direction specified by dir
-	// id: id of the wriggler
-	// bHead: true if moving the head, false if moving the tail
-	// dir: the direction that the wriggler will move in
-	bool CanMoveWriggler(unsigned int id, bool bHead, Direction dir) const;
-
-	// Moves a wriggler. Returns true if the move is valid, false otherwise
-	// id: id of the wriggler
-	// bHead: true if moving the head, false if moving the  tail.
-	// dir: the direction that the wriggler will move in
-	bool MoveWriggler(unsigned int id, bool bHead, Direction dir);
-
 	// Returns the number of wrigglers on the grid
 	unsigned int GetNumWrigglers() const;
 
@@ -97,6 +93,17 @@ protected:
 
 	// Returns the height of the grid
 	unsigned int GetHeight() const;
+
+	// This method should do all the work to solve the puzzle
+	virtual void RunAI() = 0;
+
+protected:
+
+	// Returns true if move m is valid, false otherwise
+	bool CanMoveWriggler(const Move& m) const;
+
+	// Moves a wriggler specified by m. Returns true if the move is valid, false otherwise
+	bool MoveWriggler(const Move& m);
 
 	// Returns the direction that the wriggler will move away from, the opposite side of the wriggler that is set to move
 	// w: index of the wriggler

@@ -64,15 +64,12 @@ void BFTSGrid::RunAI()
 		uvec2 pos = pNode->move.h ? pNode->head : pNode->tail;
 		cout << m_wrigglers[pNode->move.w].id << " " << !pNode->move.h << " " << pos.x << " " << pos.y << endl;
 
-		MoveWriggler(pNode->move.w,pNode->move.h,pNode->move.d);
+		MoveWriggler(pNode->move);
 	}
 
 	cout << *this;
 	cout << theTimer.GetTime() << endl;
-
 	cout << path.size() << endl;
-	cout << m_tree.Size() << endl;
-
 }
 
 void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedList, Node *pTree)
@@ -95,7 +92,7 @@ void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedLis
 			for(bool h : {true, false})
 			{
 				Direction dir = GetGetWrigglerTailDir(w,h);
-				if(MoveWriggler(w,h,d))
+				if(MoveWriggler({w,h,d}))
 				{
 					bool bProcessOnce = closedList.insert(m_wrigglers[w]).second;
 
@@ -117,7 +114,8 @@ void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedLis
 
 					// Move the wriggler back as we are backtracking,
 					// If this wriggler fails to move, then something is really wrong
-					assert(MoveWriggler(w,!h,dir) == true);
+					bool bMovedBack = MoveWriggler({w,!h,dir});
+					assert("Cannot move wriggler back" && bMovedBack);
 				}
 			}
 
