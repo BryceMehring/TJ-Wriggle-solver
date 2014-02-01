@@ -178,7 +178,7 @@ bool Grid::Load(std::istream& stream)
 			positions.push_back(pos);
 		}
 
-		m_wrigglers.push_back({std::move(positions), (unsigned int)m_grid[pos.y][pos.x] - 48});
+		m_wrigglers.push_back({std::move(positions), (unsigned int)m_grid[pos.y][pos.x] - '0'});
 	}
 
 	return wrigglers.empty() == false;
@@ -308,7 +308,7 @@ void Grid::FlipTileDirection(const uvec2& pos)
 
 void Grid::SetWrigglerTail(const uvec2& pos, unsigned int id)
 {
-	m_grid[pos.y][pos.x] = id + 48;
+	m_grid[pos.y][pos.x] = id + '0';
 }
 
 void Grid::SetWrigglerHead(const uvec2& newPos, Direction dir)
