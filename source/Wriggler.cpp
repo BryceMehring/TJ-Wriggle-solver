@@ -14,7 +14,7 @@ std::size_t WrigglerHash::operator()(const Wriggler& a) const
 {
 	const unsigned int p1 = 73856093;
 	const unsigned int p2 = 83492791;
-	std::size_t h = 1427;
+	std::size_t h = 5381;
 	for (auto iter : a.positions)
 	{
 		h += ((iter.x * p1) ^ (iter.y * p2));
