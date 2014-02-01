@@ -4,6 +4,7 @@
 #include <deque>
 #include "vec2.h"
 
+// Directions in which wrigglers can move
 enum Direction
 {
 	Up,
@@ -12,6 +13,7 @@ enum Direction
 	Right
 };
 
+// Defines a wriggler by its position along with its id
 struct Wriggler
 {
 	std::deque<uvec2> positions;
