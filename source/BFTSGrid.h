@@ -8,6 +8,10 @@
 // Defines a node that is part of a search tree
 struct Node
 {
+	Node() : pPrevious(nullptr)
+	{
+	}
+
 	// A list of all children of this node
 	std::vector<Node*> nodes;
 

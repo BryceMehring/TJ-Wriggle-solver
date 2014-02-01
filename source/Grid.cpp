@@ -1,5 +1,6 @@
 #include "Grid.h"
 #include <fstream>
+#include <cctype>
 #include <cassert>
 
 const ivec2 Grid::s_adjacentTiles[] =
@@ -277,7 +278,7 @@ bool Grid::IsHead(char c) const
 
 bool Grid::IsTail(char c) const
 {
-	return std::isdigit(c);
+	return (std::isdigit(c) != 0);
 }
 
 bool Grid::IsValid(const uvec2 &pos) const

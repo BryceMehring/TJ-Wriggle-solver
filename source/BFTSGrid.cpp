@@ -46,12 +46,15 @@ void BFTSGrid::RunAI()
 	{
 		bool bFoundFinalState = false;
 
-		if(m_wrigglers[n.move.w].id == 0)
+		if(n.pPrevious != nullptr)
 		{
-			uvec2 finalPos = {m_uiWidth - 1, m_uiHeight - 1};
-			if(n.head == finalPos || n.tail == finalPos)
+			if(m_wrigglers[n.move.w].id == 0)
 			{
-				bFoundFinalState = true;
+				uvec2 finalPos = { m_uiWidth - 1, m_uiHeight - 1 };
+				if(n.head == finalPos || n.tail == finalPos)
+				{
+					bFoundFinalState = true;
+				}
 			}
 		}
 
@@ -59,7 +62,7 @@ void BFTSGrid::RunAI()
 	});
 
 	// Draw the path that was found
-	for(Node* pNode : path)
+	for(const Node* pNode : path)
 	{
 		uvec2 pos = pNode->move.h ? pNode->head : pNode->tail;
 		cout << m_wrigglers[pNode->move.w].id << " " << !pNode->move.h << " " << pos.x << " " << pos.y << endl;

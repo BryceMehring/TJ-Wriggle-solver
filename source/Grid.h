@@ -15,12 +15,28 @@ enum Direction
 
 struct ivec2
 {
+	ivec2() : x(0), y(0)
+	{
+	}
+
+	ivec2(int x, int y) : x(x), y(y)
+	{
+	}
+
 	int x;
 	int y;
 };
 
 struct uvec2
 {
+	uvec2() : x(0), y(0)
+	{
+	}
+
+	uvec2(unsigned int x, unsigned int y) : x(x), y(y)
+	{
+	}
+
 	unsigned int x;
 	unsigned int y;
 };
@@ -61,6 +77,14 @@ public:
 // Defines a movement action for a wriggler
 struct Move
 {
+	Move() : w(0), h(false), d(Up)
+	{
+	}
+
+	Move(unsigned int wrigIndex, bool bHead, Direction dir) : w(wrigIndex), h(bHead), d(dir)
+	{
+	}
+
 	// Wriggler index
 	unsigned int w;
 
