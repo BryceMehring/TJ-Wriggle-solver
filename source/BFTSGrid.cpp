@@ -77,10 +77,8 @@ void BFTSGrid::RunAI()
 
 void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedList, Node* pTree)
 {
-	// GenerateTree()
 	// Try to move the wriggler in 8 different directions, 4 for the head and the tail
-	// Try to move the wriggler if possible
-	//		If unique position for the wriggler
+	//		If unique position for the wriggler in the current path
 	//			Add new node to the graph
 	//			Call GenerateGraph()
 	//		Unmove the wriggler

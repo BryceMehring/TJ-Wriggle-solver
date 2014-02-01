@@ -61,6 +61,7 @@ public:
 		std::queue<T*> frontier;
 		frontier.push(m_pRoot);
 
+		// Loop while we have not found the final state and there is nodes in the frontier
 		while((pFinalState == nullptr) && (!frontier.empty()))
 		{
 			T* pTop = frontier.front();
@@ -72,6 +73,7 @@ public:
 			}
 			else
 			{
+				// Add all of the nearby nodes into the frontier
 				for(auto iter : pTop->nodes)
 				{
 					frontier.push(iter);
@@ -79,6 +81,7 @@ public:
 			}
 		}
 
+		// Follow the previous pointers back to create the path ignoring the root
 		while(pFinalState != nullptr && pFinalState->pPrevious != nullptr)
 		{
 			path.push_front(pFinalState);
