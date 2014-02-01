@@ -5,66 +5,8 @@
 #include <vector>
 #include <deque>
 #include "vec2.h"
+#include "Wriggler.h"
 
-enum Direction
-{
-	Up,
-	Down,
-	Left,
-	Right
-};
-
-
-struct Wriggler
-{
-	std::deque<uvec2> positions;
-	unsigned int id;
-};
-
-bool operator==(const Wriggler& a, const Wriggler& b);
-bool operator!=(const Wriggler& a, const Wriggler& b);
-
-// Defines a hash function for a wriggler
-class WrigglerHash
-{
-public:
-
-	std::size_t operator()(const Wriggler& a) const
-	{
-		const unsigned int p1 = 73856093;
-		const unsigned int p2 = 83492791;
-		std::size_t h = 1427;
-		for(auto iter : a.positions)
-		{
-			h += ((iter.x * p1) ^ (iter.y * p2));
-		}
-
-		h += std::hash<unsigned int>()(a.id);
-
-		return h;
-	}
-};
-
-// Defines a movement action for a wriggler
-struct Move
-{
-	Move() : w(0), h(false), d(Up)
-	{
-	}
-
-	Move(unsigned int wrigIndex, bool bHead, Direction dir) : w(wrigIndex), h(bHead), d(dir)
-	{
-	}
-
-	// Wriggler index
-	unsigned int w;
-
-	// Bit indicating whether the head is being moved
-	bool h;
-
-	// Direction of movement
-	Direction d;
-};
 
 // Defines a grid for TJ-wriggle puzzles which stores the location of all the objects
 class Grid
@@ -95,10 +37,10 @@ public:
 protected:
 
 	// Returns true if move m is valid, false otherwise
-	bool CanMoveWriggler(const Move& m) const;
+	bool CanMoveWriggler(const WrigglerMove& m) const;
 
 	// Moves a wriggler specified by m. Returns true if the move is valid, false otherwise
-	bool MoveWriggler(const Move& m);
+	bool MoveWriggler(const WrigglerMove& m);
 
 	// Returns the direction that the wriggler will move away from, the opposite side of the wriggler that is set to move
 	// w: index of the wriggler

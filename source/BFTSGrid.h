@@ -26,7 +26,7 @@ struct Node
 	uvec2 tail;
 
 	// Movement from the previous state to this state
-	Move move;
+	WrigglerMove move;
 };
 
 // Breadth First Tree Search Wriggler AI

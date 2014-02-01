@@ -42,15 +42,6 @@ const char Grid::s_internalDirection[] =
 	'>'
 };
 
-bool operator==(const Wriggler& a, const Wriggler& b)
-{
-	return ((a.id == b.id) && (a.positions == b.positions));
-}
-
-bool operator!=(const Wriggler& a, const Wriggler& b)
-{
-	return !::operator==(a,b);
-}
 
 Grid::Grid() : m_uiWidth(0), m_uiHeight(0)
 {
@@ -77,7 +68,7 @@ unsigned int Grid::GetHeight() const
 	return m_uiHeight;
 }
 
-bool Grid::CanMoveWriggler(const Move& m) const
+bool Grid::CanMoveWriggler(const WrigglerMove& m) const
 {
 	assert(m.w < m_wrigglers.size());
 
@@ -99,7 +90,7 @@ bool Grid::CanMoveWriggler(const Move& m) const
 	return bCanMove;
 }
 
-bool Grid::MoveWriggler(const Move& m)
+bool Grid::MoveWriggler(const WrigglerMove& m)
 {
 	if(CanMoveWriggler(m))
 	{
