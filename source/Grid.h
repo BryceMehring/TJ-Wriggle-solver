@@ -170,7 +170,13 @@ protected:
 	unsigned int m_uiWidth;
 	unsigned int m_uiHeight;
 
+private:
+
 	static const ivec2 s_adjacentTiles[];
+	static const ivec2 s_directions[];
+	static const char s_headDirection[];
+	static const char s_flipedHeadDirection[];
+	static const char s_internalDirection[];
 };
 
 std::ostream& operator <<(std::ostream& stream, const Grid&);

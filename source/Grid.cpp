@@ -10,7 +10,7 @@ const ivec2 Grid::s_adjacentTiles[] =
 		{ 0, 1 }, { 1, 1 }
 };
 
-static const ivec2 DIRECTIONS[] =
+const ivec2 Grid::s_directions[] =
 {
 	{0,-1}, // Up
 	{0,1}, // Down
@@ -18,7 +18,7 @@ static const ivec2 DIRECTIONS[] =
 	{1,0} // Right
 };
 
-static const char HEAD_DIRECTION[] =
+const char Grid::s_headDirection[] =
 {
 	'U',
 	'D',
@@ -26,7 +26,7 @@ static const char HEAD_DIRECTION[] =
 	'R'
 };
 
-static const char FLIPED_HEAD_DIRECTION[] =
+const char Grid::s_flipedHeadDirection[] =
 {
 	'D',
 	'U',
@@ -34,7 +34,7 @@ static const char FLIPED_HEAD_DIRECTION[] =
 	'L'
 };
 
-static const char INTERNAL_DIRECTION[] =
+const char Grid::s_internalDirection[] =
 {
 	'^',
 	'v',
@@ -87,8 +87,8 @@ bool Grid::CanMoveWriggler(const Move& m) const
 	{
 		uvec2 newPos = m.h ? wriggler.positions.front() : wriggler.positions.back();
 
-		newPos.x += DIRECTIONS[m.d].x;
-		newPos.y += DIRECTIONS[m.d].y;
+		newPos.x += s_directions[m.d].x;
+		newPos.y += s_directions[m.d].y;
 
 		if(IsValid(newPos))
 		{
@@ -106,8 +106,8 @@ bool Grid::MoveWriggler(const Move& m)
 		Wriggler& wriggler = m_wrigglers[m.w];
 		uvec2 newPos = m.h ? wriggler.positions.front() : wriggler.positions.back();
 
-		newPos.x += DIRECTIONS[m.d].x;
-		newPos.y += DIRECTIONS[m.d].y;
+		newPos.x += s_directions[m.d].x;
+		newPos.y += s_directions[m.d].y;
 
 		if(m.h)
 		{
@@ -230,7 +230,7 @@ std::vector<uvec2> Grid::GenerateGrid(std::istream& stream)
 
 ivec2 Grid::GetDirVector(char c) const
 {
-	return DIRECTIONS[GetDir(c)];
+	return s_directions[GetDir(c)];
 }
 
 Direction Grid::GetDir(char c) const
@@ -322,12 +322,12 @@ void Grid::SetWrigglerTail(const uvec2& pos, unsigned int id)
 
 void Grid::SetWrigglerHead(const uvec2& newPos, Direction dir)
 {
-	m_grid[newPos.y][newPos.x] = FLIPED_HEAD_DIRECTION[dir];
+	m_grid[newPos.y][newPos.x] = s_flipedHeadDirection[dir];
 }
 
 void Grid::SetWrigglerDirection(const uvec2& pos, Direction dir)
 {
-	m_grid[pos.y][pos.x] = INTERNAL_DIRECTION[dir];
+	m_grid[pos.y][pos.x] = s_internalDirection[dir];
 }
 
 std::ostream& operator <<(std::ostream& stream, const Grid& grd)
