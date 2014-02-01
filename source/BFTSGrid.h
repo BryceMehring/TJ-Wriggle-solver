@@ -3,6 +3,7 @@
 
 #include "Grid.h"
 #include "Tree.h"
+#include "vec2.h"
 #include <unordered_set>
 
 // Defines a node that is part of a search tree
@@ -37,7 +38,7 @@ public:
 	BFTSGrid(const std::string& file);
 
 	// Loads puzzle description from the specified file
-	// The old state of the grid is discared
+	// The old state of the grid is discarded
 	bool Load(const std::string& file);
 
 	// Solves the wriggler puzzle and prints the solution using BFTS

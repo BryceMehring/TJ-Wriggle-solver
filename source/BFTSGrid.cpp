@@ -9,7 +9,7 @@ BFTSGrid::BFTSGrid()
 {
 }
 
-BFTSGrid::BFTSGrid(const string &file)
+BFTSGrid::BFTSGrid(const string& file)
 {
 	if(!Load(file))
 	{
@@ -17,7 +17,7 @@ BFTSGrid::BFTSGrid(const string &file)
 	}
 }
 
-bool BFTSGrid::Load(const string &file)
+bool BFTSGrid::Load(const string& file)
 {
 	bool bSuccess = Grid::Load(file);
 	if(bSuccess)
@@ -75,7 +75,7 @@ void BFTSGrid::RunAI()
 	cout << path.size() << endl;
 }
 
-void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedList, Node *pTree)
+void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedList, Node* pTree)
 {
 	// GenerateTree()
 	// Try to move the wriggler in 8 different directions, 4 for the head and the tail

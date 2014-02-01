@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <deque>
+#include "vec2.h"
 
 enum Direction
 {
@@ -13,36 +14,6 @@ enum Direction
 	Right
 };
 
-struct ivec2
-{
-	ivec2() : x(0), y(0)
-	{
-	}
-
-	ivec2(int x, int y) : x(x), y(y)
-	{
-	}
-
-	int x;
-	int y;
-};
-
-struct uvec2
-{
-	uvec2() : x(0), y(0)
-	{
-	}
-
-	uvec2(unsigned int x, unsigned int y) : x(x), y(y)
-	{
-	}
-
-	unsigned int x;
-	unsigned int y;
-};
-
-bool operator==(const uvec2& a, const uvec2& b);
-bool operator!=(const uvec2& a, const uvec2& b);
 
 struct Wriggler
 {
@@ -160,7 +131,7 @@ private:
 	// Sets the position specified by pos to empty
 	void ClearPos(const uvec2& pos);
 
-	// Inverts the direction at the specified positon in the grid
+	// Inverts the direction at the specified position in the grid
 	// 'U' <--> '^'
 	// 'D' <--> 'v'
 	// 'L' <--> '<'
@@ -192,7 +163,7 @@ protected:
 	// Grid containing all of the tiles
 	std::vector<std::vector<char>> m_grid;
 
-	// List containing all of the wriglers
+	// List containing all of the wrigglers
 	std::vector<Wriggler> m_wrigglers;
 
 	// Width and height of the grid

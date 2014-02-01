@@ -42,16 +42,6 @@ static const char INTERNAL_DIRECTION[] =
 	'>'
 };
 
-bool operator==(const uvec2& a, const uvec2& b)
-{
-	return ((a.x == b.x) && (a.y == b.y));
-}
-
-bool operator!=(const uvec2& a, const uvec2& b)
-{
-	return !::operator==(a,b);
-}
-
 bool operator==(const Wriggler& a, const Wriggler& b)
 {
 	return ((a.id == b.id) && (a.positions == b.positions));
