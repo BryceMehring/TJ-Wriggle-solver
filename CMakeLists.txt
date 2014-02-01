@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(TJ-Wriggle CXX)
+project(TJ-Wriggler CXX)
 
 if(UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -pedantic")
@@ -12,4 +12,19 @@ file(GLOB_RECURSE TJW_SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/source/*.h)
 
 add_executable(tjw ${TJW_SOURCE})
+
+SET(CPACK_PACKAGE_VERSION_MAJOR "1")
+SET(CPACK_PACKAGE_VERSION_MINOR "0")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+
+set(CPACK_GENERATOR "ZIP")
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "./")
+include(InstallRequiredSystemLibraries)
+include(CPack)
+
+install(FILES tjw.pro DESTINATION ./)
+install(FILES README.md DESTINATION ./)
+install(FILES puzzle1.txt.out DESTINATION ./)
+install(DIRECTORY source/ DESTINATION ./source)
+
 
