@@ -1,4 +1,5 @@
 #include "Wriggler.h"
+#include <functional>
 
 bool operator==(const Wriggler& a, const Wriggler& b)
 {
