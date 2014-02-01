@@ -5,11 +5,11 @@
 
 using namespace std;
 
-BFTSWrigglerGrid::BFTSWrigglerGrid()
+BFTSWrigglerGrid::BFTSWrigglerGrid() : m_wallTime(0)
 {
 }
 
-BFTSWrigglerGrid::BFTSWrigglerGrid(const string& file)
+BFTSWrigglerGrid::BFTSWrigglerGrid(const string& file) : m_wallTime(0)
 {
 	if(!Load(file))
 	{
@@ -28,8 +28,13 @@ bool BFTSWrigglerGrid::Load(const string& file)
 		m_tree.SetRoot(pTree);
 		m_tree.AddNode(pTree);
 
+		Timer theTimer;
+		theTimer.Start();
+
 		std::unordered_set<Wriggler,WrigglerHash> closedList;
 		GenerateTree(closedList, pTree);
+
+		m_wallTime += theTimer.GetTime();
 	}
 
 	return bSuccess;
@@ -63,6 +68,8 @@ void BFTSWrigglerGrid::RunAI()
 		return bFoundFinalState;
 	});
 
+	m_wallTime += theTimer.GetTime();
+
 	// Draw the path that was found
 	for(const Node* pNode : path)
 	{
@@ -76,7 +83,7 @@ void BFTSWrigglerGrid::RunAI()
 	cout << *this;
 
 	// Draw the time
-	cout << theTimer.GetTime() << endl;
+	cout << m_wallTime << endl;
 
 	// Draw path length
 	cout << path.size() << endl;

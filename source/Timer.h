@@ -2,6 +2,7 @@
 #define _TIMER_H_
 
 #include <chrono>
+#include <cstdint>
 
 // Defines a simple High Resolution Timer
 class Timer
@@ -21,8 +22,8 @@ public:
 	// of the Timer's members to their initial values.
 	void Reset();
 
-	// Returns the time elapsed since Start() was called in seconds.
-	double GetTime();
+	// Returns the time elapsed since Start() was called in nanoseconds.
+	std::uint64_t GetTime();
 
 	// Returns true if the Timer is currently active.
 	bool IsActive() const;

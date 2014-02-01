@@ -50,6 +50,7 @@ public:
 private:
 
 	Tree<Node> m_tree;
+	std::uint64_t m_wallTime;
 
 	// Builds a tree of valid moves
 	// closedList: used by the method to avoid getting stuck in loops

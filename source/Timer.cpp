@@ -30,18 +30,15 @@ void Timer::Reset()
 	m_bActive = false;
 }
 
-double Timer::GetTime()
+std::uint64_t Timer::GetTime()
 {
-	typedef std::chrono::high_resolution_clock::duration duration;
-	typedef std::chrono::high_resolution_clock::period period;
-
 	if (m_bActive)
 	{
 		PollCounter(m_end);
 	}
 
-	duration time_span = std::chrono::duration_cast<duration>(m_end - m_start);
-	return time_span.count() / static_cast<double>(period::den);
+	std::chrono::nanoseconds time_span = std::chrono::duration_cast<std::chrono::nanoseconds>(m_end - m_start);
+	return time_span.count();
 }
 
 bool Timer::IsActive() const
