@@ -1,7 +1,7 @@
 #ifndef _BFTS_GRID_
 #define _BFTS_GRID_
 
-#include "Grid.h"
+#include "WrigglerGrid.h"
 #include "Tree.h"
 #include "vec2.h"
 #include <unordered_set>
@@ -30,24 +30,30 @@ struct Node
 };
 
 // Breadth First Tree Search Wriggler AI
-class BFTSGrid : public Grid
+class BFTSWrigglerGrid : public WrigglerGrid
 {
 public:
 
-	BFTSGrid();
-	BFTSGrid(const std::string& file);
+	// Constructs an empty puzzle
+	BFTSWrigglerGrid();
+
+	// Constructs the puzzle from the specified file
+	BFTSWrigglerGrid(const std::string& file);
 
 	// Loads puzzle description from the specified file
 	// The old state of the grid is discarded
 	bool Load(const std::string& file);
 
-	// Solves the wriggler puzzle and prints the solution using BFTS
+	// Solves the wriggler puzzle using BFTS and prints the solution
 	virtual void RunAI();
 
 private:
 
 	Tree<Node> m_tree;
 
+	// Builds a tree of valid moves
+	// closedList: used by the method to avoid getting stuck in loops
+	// pTree: the root of the tree
 	void GenerateTree(std::unordered_set<Wriggler, WrigglerHash>& closedList, Node* pTree);
 
 };

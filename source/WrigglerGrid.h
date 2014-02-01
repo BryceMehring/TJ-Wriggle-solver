@@ -1,5 +1,5 @@
-#ifndef _GRID_
-#define _GRID_
+#ifndef _WRIGGLER_GRID_
+#define _WRIGGLER_GRID_
 
 #include <string>
 #include <vector>
@@ -9,14 +9,15 @@
 
 
 // Defines a grid for TJ-wriggle puzzles which stores the location of all the objects
-class Grid
+// and manages basic wriggler operations
+class WrigglerGrid
 {
 public:
 
 	// Builds an empty grid
-	Grid();
+	WrigglerGrid();
 
-	virtual ~Grid() {}
+	virtual ~WrigglerGrid() {}
 
 	// Loads puzzle description from the specified file
 	// The old state of the grid is discarded
@@ -64,10 +65,10 @@ private:
 	// Returns true if c is the head of a wriggler, false otherwise
 	bool IsHead(char c) const;
 
-	// Returns true is c is the tail of a wriggler, false otherwise
+	// Returns true if c is the tail of a wriggler, false otherwise
 	bool IsTail(char c) const;
 
-	// Returns true is pos is a valid position to move to, false otherwise
+	// Returns true if pos is a valid position to move to, false otherwise
 	bool IsValid(const uvec2& pos) const;
 
 	// Sets the position specified by pos to empty
@@ -97,8 +98,8 @@ private:
 	void SetWrigglerDirection(const uvec2& pos, Direction dir);
 
 	// Grid I/O
-	friend std::ostream& operator <<(std::ostream& stream, const Grid& grd);
-	friend std::istream& operator >>(std::istream& stream, Grid& grd);
+	friend std::ostream& operator <<(std::ostream& stream, const WrigglerGrid& grd);
+	friend std::istream& operator >>(std::istream& stream, WrigglerGrid& grd);
 
 protected:
 
@@ -121,7 +122,7 @@ private:
 	static const char s_internalDirection[];
 };
 
-std::ostream& operator <<(std::ostream& stream, const Grid&);
-std::istream& operator >>(std::istream& stream, Grid&);
+std::ostream& operator <<(std::ostream& stream, const WrigglerGrid&);
+std::istream& operator >>(std::istream& stream, WrigglerGrid&);
 
-#endif // _GRID_
+#endif // _WRIGGLER_GRID_

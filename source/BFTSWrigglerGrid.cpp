@@ -1,15 +1,15 @@
-#include "BFTSGrid.h"
+#include "BFTSWrigglerGrid.h"
 #include "Timer.h"
 #include <iostream>
 #include <cassert>
 
 using namespace std;
 
-BFTSGrid::BFTSGrid()
+BFTSWrigglerGrid::BFTSWrigglerGrid()
 {
 }
 
-BFTSGrid::BFTSGrid(const string& file)
+BFTSWrigglerGrid::BFTSWrigglerGrid(const string& file)
 {
 	if(!Load(file))
 	{
@@ -17,9 +17,9 @@ BFTSGrid::BFTSGrid(const string& file)
 	}
 }
 
-bool BFTSGrid::Load(const string& file)
+bool BFTSWrigglerGrid::Load(const string& file)
 {
-	bool bSuccess = Grid::Load(file);
+	bool bSuccess = WrigglerGrid::Load(file);
 	if(bSuccess)
 	{
 		Node* pTree = new Node();
@@ -35,7 +35,7 @@ bool BFTSGrid::Load(const string& file)
 	return bSuccess;
 }
 
-void BFTSGrid::RunAI()
+void BFTSWrigglerGrid::RunAI()
 {
 	Timer theTimer;
 	theTimer.Start();
@@ -46,10 +46,12 @@ void BFTSGrid::RunAI()
 	{
 		bool bFoundFinalState = false;
 
+		// Final state check
 		if(n.pPrevious != nullptr)
 		{
 			if(m_wrigglers[n.move.w].id == 0)
 			{
+				// Check if the blue wriggler has moved to the bottom right corner of the grid
 				uvec2 finalPos = { m_uiWidth - 1, m_uiHeight - 1 };
 				if(n.head == finalPos || n.tail == finalPos)
 				{
@@ -70,12 +72,17 @@ void BFTSGrid::RunAI()
 		MoveWriggler(pNode->move);
 	}
 
+	// Draw the final grid after movement
 	cout << *this;
+
+	// Draw the time
 	cout << theTimer.GetTime() << endl;
+
+	// Draw path length
 	cout << path.size() << endl;
 }
 
-void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedList, Node* pTree)
+void BFTSWrigglerGrid::GenerateTree(std::unordered_set<Wriggler, WrigglerHash>& closedList, Node* pTree)
 {
 	// Try to move the wriggler in 8 different directions, 4 for the head and the tail
 	//		If unique position for the wriggler in the current path
@@ -99,6 +106,9 @@ void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedLis
 
 					if(bProcessOnce)
 					{
+						// If we can move and we have not processed this position on this path, 
+						// create a new node that is part of this path
+
 						auto* pNewNode = new Node();
 						pNewNode->pPrevious = pTree;
 						pNewNode->move = {w,h,d};
@@ -108,13 +118,15 @@ void BFTSGrid::GenerateTree(std::unordered_set<Wriggler,WrigglerHash>& closedLis
 
 						m_tree.AddNode(pNewNode);
 
+						// Try to continue moving
 						GenerateTree(closedList,pNewNode);
 
+						// Cannot move anymore, so um-mark this position as we backtrack
 						closedList.erase(m_wrigglers[w]);
 					}
 
 					// Move the wriggler back as we are backtracking,
-					// If this wriggler fails to move, then something is really wrong
+					// if this wriggler fails to move, then something is really wrong
 					bool bMovedBack = MoveWriggler({w,!h,dir});
 					assert("Cannot move wriggler back" && bMovedBack);
 				}

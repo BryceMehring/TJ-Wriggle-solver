@@ -1,4 +1,4 @@
-#include "BFTSGrid.h"
+#include "BFTSWrigglerGrid.h"
 #include <iostream>
 #include <cassert>
 
@@ -16,8 +16,8 @@ int main(int n, char** cmd)
 	try
 	{
 		const char* file = cmd[1];
-		BFTSGrid myGrid(file);
-		myGrid.RunAI();
+		BFTSWrigglerGrid puzzle(file);
+		puzzle.RunAI();
 	}
 	catch(std::exception& exc)
 	{

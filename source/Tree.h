@@ -12,6 +12,7 @@ class Tree
 {
 public:
 
+	// Builds an empty tree
 	Tree() : m_pRoot(nullptr)
 	{
 	}
@@ -22,6 +23,7 @@ public:
 		Clear();
 	}
 
+	// Returns the number of nodes in the tree
 	unsigned int Size() const
 	{
 		return m_nodes.size();
@@ -48,9 +50,10 @@ public:
 		}
 	}
 
-	// Apply's breadth first search to the tree and then return the result
-	// F: Final state test functor which accepts a reference to T and returns a boolean.
-	// True if this is the final state, false otherwise
+	// Apply's breadth first search to the tree
+	// path: the path will be written if a path is found
+	// F: Final state test functor which accepts a reference to T and returns a boolean,
+	// 'true' if this is the final state, 'false' otherwise
 	template< class F >
 	void BreadthFirstSearch(std::list<T*>& path, const F& finalStateFunctor)
 	{

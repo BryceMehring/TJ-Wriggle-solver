@@ -1,16 +1,16 @@
-#include "Grid.h"
+#include "WrigglerGrid.h"
 #include <fstream>
 #include <cctype>
 #include <cassert>
 
-const ivec2 Grid::s_adjacentTiles[] =
+const ivec2 WrigglerGrid::s_adjacentTiles[] =
 {
 		{ -1, -1 }, { 0, -1 }, { 1, -1 },
 		{ -1, 0 }, { 1, 0 }, { -1, 1 },
 		{ 0, 1 }, { 1, 1 }
 };
 
-const ivec2 Grid::s_directions[] =
+const ivec2 WrigglerGrid::s_directions[] =
 {
 	{0,-1}, // Up
 	{0,1}, // Down
@@ -18,7 +18,7 @@ const ivec2 Grid::s_directions[] =
 	{1,0} // Right
 };
 
-const char Grid::s_headDirection[] =
+const char WrigglerGrid::s_headDirection[] =
 {
 	'U',
 	'D',
@@ -26,7 +26,7 @@ const char Grid::s_headDirection[] =
 	'R'
 };
 
-const char Grid::s_flipedHeadDirection[] =
+const char WrigglerGrid::s_flipedHeadDirection[] =
 {
 	'D',
 	'U',
@@ -34,7 +34,7 @@ const char Grid::s_flipedHeadDirection[] =
 	'L'
 };
 
-const char Grid::s_internalDirection[] =
+const char WrigglerGrid::s_internalDirection[] =
 {
 	'^',
 	'v',
@@ -43,32 +43,32 @@ const char Grid::s_internalDirection[] =
 };
 
 
-Grid::Grid() : m_uiWidth(0), m_uiHeight(0)
+WrigglerGrid::WrigglerGrid() : m_uiWidth(0), m_uiHeight(0)
 {
 }
 
-bool Grid::Load(const std::string& file)
+bool WrigglerGrid::Load(const std::string& file)
 {
 	std::ifstream inFile(file);
 	return Load(inFile);
 }
 
-unsigned int Grid::GetNumWrigglers() const
+unsigned int WrigglerGrid::GetNumWrigglers() const
 {
 	return m_wrigglers.size();
 }
 
-unsigned int Grid::GetWidth() const
+unsigned int WrigglerGrid::GetWidth() const
 {
 	return m_uiWidth;
 }
 
-unsigned int Grid::GetHeight() const
+unsigned int WrigglerGrid::GetHeight() const
 {
 	return m_uiHeight;
 }
 
-bool Grid::CanMoveWriggler(const WrigglerMove& m) const
+bool WrigglerGrid::CanMoveWriggler(const WrigglerMove& m) const
 {
 	assert(m.w < m_wrigglers.size());
 
@@ -76,6 +76,7 @@ bool Grid::CanMoveWriggler(const WrigglerMove& m) const
 	const Wriggler& wriggler = m_wrigglers[m.w];
 	if(!wriggler.positions.empty())
 	{
+		// Get the position of the wriggler that we are moving
 		uvec2 newPos = m.h ? wriggler.positions.front() : wriggler.positions.back();
 
 		newPos.x += s_directions[m.d].x;
@@ -90,7 +91,7 @@ bool Grid::CanMoveWriggler(const WrigglerMove& m) const
 	return bCanMove;
 }
 
-bool Grid::MoveWriggler(const WrigglerMove& m)
+bool WrigglerGrid::MoveWriggler(const WrigglerMove& m)
 {
 	if(CanMoveWriggler(m))
 	{
@@ -136,7 +137,7 @@ bool Grid::MoveWriggler(const WrigglerMove& m)
 	return false;
 }
 
-Direction Grid::GetGetWrigglerTailDir(unsigned int w, bool bHead)
+Direction WrigglerGrid::GetGetWrigglerTailDir(unsigned int w, bool bHead)
 {
 	// All wrigglers must have a length of at least two for this algorithm to work
 	assert((w < m_wrigglers.size()) && (m_wrigglers[w].positions.size() >= 2));
@@ -161,7 +162,7 @@ Direction Grid::GetGetWrigglerTailDir(unsigned int w, bool bHead)
 	return dir;
 }
 
-bool Grid::Load(std::istream& stream)
+bool WrigglerGrid::Load(std::istream& stream)
 {
 	std::vector<uvec2> wrigglers = GenerateGrid(stream);
 
@@ -191,7 +192,7 @@ bool Grid::Load(std::istream& stream)
 	return (wrigglers.empty() == false);
 }
 
-std::vector<uvec2> Grid::GenerateGrid(std::istream& stream)
+std::vector<uvec2> WrigglerGrid::GenerateGrid(std::istream& stream)
 {
 	std::vector<uvec2> wrigglers;
 
@@ -226,12 +227,12 @@ std::vector<uvec2> Grid::GenerateGrid(std::istream& stream)
 }
 
 
-ivec2 Grid::GetDirVector(char c) const
+ivec2 WrigglerGrid::GetDirVector(char c) const
 {
 	return s_directions[GetDir(c)];
 }
 
-Direction Grid::GetDir(char c) const
+Direction WrigglerGrid::GetDir(char c) const
 {
 	Direction dir;
 	switch(c)
@@ -259,28 +260,28 @@ Direction Grid::GetDir(char c) const
 	return dir;
 }
 
-bool Grid::IsHead(char c) const
+bool WrigglerGrid::IsHead(char c) const
 {
 	return (c == 'U' || c == 'D' || c == 'L' || c == 'R');
 }
 
-bool Grid::IsTail(char c) const
+bool WrigglerGrid::IsTail(char c) const
 {
 	return (std::isdigit(c) != 0);
 }
 
-bool Grid::IsValid(const uvec2& pos) const
+bool WrigglerGrid::IsValid(const uvec2& pos) const
 {
 	return ((pos.x < m_uiWidth) && (pos.y < m_uiHeight) && (m_grid[pos.y][pos.x] == 'e'));
 }
 
-void Grid::ClearPos(const uvec2& pos)
+void WrigglerGrid::ClearPos(const uvec2& pos)
 {
 	assert((pos.x < m_uiWidth) && (pos.y < m_uiHeight));
 	m_grid[pos.y][pos.x] = 'e';
 }
 
-void Grid::FlipTileDirection(const uvec2& pos)
+void WrigglerGrid::FlipTileDirection(const uvec2& pos)
 {
 	assert((pos.x < m_uiWidth) && (pos.y < m_uiHeight));
 
@@ -316,26 +317,25 @@ void Grid::FlipTileDirection(const uvec2& pos)
 	}
 }
 
-void Grid::SetWrigglerTail(const uvec2& pos, unsigned int id)
+void WrigglerGrid::SetWrigglerTail(const uvec2& pos, unsigned int id)
 {
 	assert((pos.x < m_uiWidth) && (pos.y < m_uiHeight));
-
 	m_grid[pos.y][pos.x] = id + '0';
 }
 
-void Grid::SetWrigglerHead(const uvec2& newPos, Direction dir)
+void WrigglerGrid::SetWrigglerHead(const uvec2& newPos, Direction dir)
 {
 	assert((newPos.x < m_uiWidth) && (newPos.y < m_uiHeight));
 	m_grid[newPos.y][newPos.x] = s_flipedHeadDirection[dir];
 }
 
-void Grid::SetWrigglerDirection(const uvec2& pos, Direction dir)
+void WrigglerGrid::SetWrigglerDirection(const uvec2& pos, Direction dir)
 {
 	assert((pos.x < m_uiWidth) && (pos.y < m_uiHeight));
 	m_grid[pos.y][pos.x] = s_internalDirection[dir];
 }
 
-std::ostream& operator <<(std::ostream& stream, const Grid& grd)
+std::ostream& operator <<(std::ostream& stream, const WrigglerGrid& grd)
 {
 	for(auto& height : grd.m_grid)
 	{
@@ -349,7 +349,7 @@ std::ostream& operator <<(std::ostream& stream, const Grid& grd)
 	return stream;
 }
 
-std::istream& operator >>(std::istream& stream, Grid& grd)
+std::istream& operator >>(std::istream& stream, WrigglerGrid& grd)
 {
 	grd.Load(stream);
 	return stream;
