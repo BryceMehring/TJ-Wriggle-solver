@@ -111,7 +111,7 @@ private:
 	bool Load(std::istream& stream);
 
 	// Fills the grid from the file and returns the location of all the heads of the wrigglers
-	std::vector<uvec2> GenerateGrid(std::istream &stream);
+	std::vector<uvec2> GenerateGrid(std::istream& stream);
 
 	// Returns the direction specified by the current tile character c in array space, which can either be 'U', '^', 'D', 'v', 'L', '<', 'R', '>'
 	ivec2 GetDirVector(char c) const;
@@ -155,8 +155,8 @@ private:
 	void SetWrigglerDirection(const uvec2& pos, Direction dir);
 
 	// Grid I/O
-	friend std::ostream& operator <<(std::ostream& stream, const Grid&);
-	friend std::istream& operator >>(std::istream& stream, Grid&);
+	friend std::ostream& operator <<(std::ostream& stream, const Grid& grd);
+	friend std::istream& operator >>(std::istream& stream, Grid& grd);
 
 protected:
 

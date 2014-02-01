@@ -56,7 +56,7 @@ Grid::Grid() : m_uiWidth(0), m_uiHeight(0)
 {
 }
 
-bool Grid::Load(const std::string &file)
+bool Grid::Load(const std::string& file)
 {
 	std::ifstream inFile(file);
 	return Load(inFile);
@@ -164,7 +164,7 @@ Direction Grid::GetGetWrigglerTailDir(unsigned int w, bool bHead)
 	}
 }
 
-bool Grid::Load(std::istream &stream)
+bool Grid::Load(std::istream& stream)
 {
 	std::vector<uvec2> wrigglers = GenerateGrid(stream);
 
@@ -193,7 +193,7 @@ bool Grid::Load(std::istream &stream)
 	return wrigglers.empty() == false;
 }
 
-std::vector<uvec2> Grid::GenerateGrid(std::istream &stream)
+std::vector<uvec2> Grid::GenerateGrid(std::istream& stream)
 {
 	std::vector<uvec2> wrigglers;
 
@@ -271,17 +271,17 @@ bool Grid::IsTail(char c) const
 	return (std::isdigit(c) != 0);
 }
 
-bool Grid::IsValid(const uvec2 &pos) const
+bool Grid::IsValid(const uvec2& pos) const
 {
 	return ((pos.x < m_uiWidth) && (pos.y < m_uiHeight) && (m_grid[pos.y][pos.x] == 'e'));
 }
 
-void Grid::ClearPos(const uvec2 &pos)
+void Grid::ClearPos(const uvec2& pos)
 {
 	m_grid[pos.y][pos.x] = 'e';
 }
 
-void Grid::FlipTileDirection(const uvec2 &pos)
+void Grid::FlipTileDirection(const uvec2& pos)
 {
 	char& tile = m_grid[pos.y][pos.x];
 	switch(tile)
@@ -315,7 +315,7 @@ void Grid::FlipTileDirection(const uvec2 &pos)
 	}
 }
 
-void Grid::SetWrigglerTail(const uvec2 &pos, unsigned int id)
+void Grid::SetWrigglerTail(const uvec2& pos, unsigned int id)
 {
 	m_grid[pos.y][pos.x] = id + 48;
 }
@@ -325,14 +325,14 @@ void Grid::SetWrigglerHead(const uvec2& newPos, Direction dir)
 	m_grid[newPos.y][newPos.x] = FLIPED_HEAD_DIRECTION[dir];
 }
 
-void Grid::SetWrigglerDirection(const uvec2 &pos, Direction dir)
+void Grid::SetWrigglerDirection(const uvec2& pos, Direction dir)
 {
 	m_grid[pos.y][pos.x] = INTERNAL_DIRECTION[dir];
 }
 
-std::ostream& operator <<(std::ostream& stream, const Grid& g)
+std::ostream& operator <<(std::ostream& stream, const Grid& grd)
 {
-	for(auto& height : g.m_grid)
+	for(auto& height : grd.m_grid)
 	{
 		for(auto& iter : height)
 		{
@@ -344,8 +344,8 @@ std::ostream& operator <<(std::ostream& stream, const Grid& g)
 	return stream;
 }
 
-std::istream& operator >>(std::istream& stream, Grid& g)
+std::istream& operator >>(std::istream& stream, Grid& grd)
 {
-	g.Load(stream);
+	grd.Load(stream);
 	return stream;
 }

@@ -48,7 +48,7 @@ private:
 
 	Tree<Node> m_tree;
 
-	void GenerateTree(std::unordered_set<Wriggler, WrigglerHash> &closedList, Node *pTree);
+	void GenerateTree(std::unordered_set<Wriggler, WrigglerHash>& closedList, Node* pTree);
 
 };
 
