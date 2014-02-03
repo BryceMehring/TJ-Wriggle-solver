@@ -1,4 +1,5 @@
 #include "BFTSWrigglerGrid.h"
+#include "ID_DFTSWrigglerGrid.h"
 #include <iostream>
 #include <cassert>
 
@@ -16,7 +17,7 @@ int main(int n, char** cmd)
 	try
 	{
 		const char* file = cmd[1];
-		BFTSWrigglerGrid puzzle(file);
+		ID_DFTSWrigglerWrig puzzle(file);
 		puzzle.RunAI();
 	}
 	catch(std::exception& exc)
