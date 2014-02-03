@@ -5,6 +5,7 @@
 #include "Tree.h"
 #include "vec2.h"
 #include <unordered_set>
+#include <cinttypes>
 
 // Defines a node that is part of a search tree
 struct Node
