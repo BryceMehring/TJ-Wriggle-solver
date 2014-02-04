@@ -100,6 +100,8 @@ SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, int dep
 				Direction dir = GetGetWrigglerTailDir(w,h);
 				if(MoveWriggler({w,h,d}))
 				{
+					SearchResult result = SearchResult::Failure;
+
 					if(pNode == nullptr || pNode->pPrevious == nullptr || pNode->pPrevious->positions != m_wrigglers[w].positions)
 					{
 						auto* pNewNode = new IDNode();
@@ -107,24 +109,28 @@ SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, int dep
 						pNewNode->move = {w,h,d};
 						pNewNode->positions = m_wrigglers[w].positions;
 
-						SearchResult result = DLS(pSolution, pNewNode, depth - 1);
+						result = DLS(pSolution, pNewNode, depth - 1);
 
-						if(result == SearchResult::Cutoff)
+						if(result != SearchResult::Success)
 						{
-							bCutOffOccured = true;
-						}
-						else if(result != SearchResult::Failure)
-						{
-							return result;
-						}
+							if(result == SearchResult::Cutoff)
+							{
+								bCutOffOccured = true;
+							}
 
-						delete pNewNode;
+							delete pNewNode;
+						}
 					}
 
 					// Move the wriggler back as we are backtracking,
 					// if this wriggler fails to move, then something is really wrong
 					bool bMovedBack = MoveWriggler({w,!h,dir});
 					assert("Cannot move wriggler back" && bMovedBack);
+
+					if(result == SearchResult::Success)
+					{
+						return result;
+					}
 				}
 			}
 		}
