@@ -1,4 +1,4 @@
-##CS347 TJ-Wriggler implemented by Bryce Mehring
+##CS347 TJ-Wriggle solver implemented by Bryce Mehring
 
 How to compile the code:
 
