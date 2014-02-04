@@ -1,4 +1,5 @@
 HEADERS += source/BFTSWrigglerGrid.h \
+			source/ID_DFTSWrigglerGrid.h \
 			source/Timer.h \
 			source/Tree.h \
 			source/vec2.h \
@@ -6,6 +7,7 @@ HEADERS += source/BFTSWrigglerGrid.h \
 			source/WrigglerGrid.h
 
 SOURCES = source/BFTSWrigglerGrid.cpp \
+		  source/ID_DFTSWrigglerGrid.cpp \
 		  source/Timer.cpp \
 		  source/Tjw.cpp \
 		  source/Wriggler.cpp \
