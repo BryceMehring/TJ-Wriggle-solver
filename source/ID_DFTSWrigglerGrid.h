@@ -3,6 +3,7 @@
 
 #include "WrigglerGrid.h"
 #include <memory>
+#include <map>
 
 // Defines a node that is part of a search tree
 struct IDNode
@@ -49,7 +50,7 @@ public:
 	// pNode: node to apply dls too
 	// depth: the depth limit
 	SearchResult DLS(int depth, std::deque<std::unique_ptr<IDNode>>& path);
-	SearchResult DLS(IDNode** pSolution, IDNode* pNode, int depth);
+	SearchResult DLS(IDNode** pSolution, IDNode* pNode, std::map<std::vector<std::vector<char>>,int>& states, int depth);
 };
 
 #endif // _ID_DFTS_WRIGGLER_GRID_
