@@ -2,6 +2,7 @@
 #define _ID_DFTS_WRIGGLER_GRID_
 
 #include "WrigglerGrid.h"
+#include <memory>
 
 // Defines a node that is part of a search tree
 struct IDNode
@@ -10,9 +11,6 @@ struct IDNode
 	{
 	}
 
-	// A list of all children of this node
-	std::vector<IDNode*> nodes;
-
 	// Pointer to the previous Node in the tree
 	IDNode* pPrevious;
 
@@ -20,6 +18,13 @@ struct IDNode
 
 	// Movement from the previous state to this state
 	WrigglerMove move;
+};
+
+enum class SearchResult
+{
+	Success,
+	Failure,
+	Cutoff
 };
 
 class ID_DFTSWrigglerWrig : public WrigglerGrid
@@ -43,7 +48,8 @@ public:
 	// Returns the target node if found, else nullptr
 	// pNode: node to apply dls too
 	// depth: the depth limit
-	IDNode* DLS(IDNode* pNode, int depth);
+	SearchResult DLS(int depth, std::deque<std::unique_ptr<IDNode>>& path);
+	SearchResult DLS(IDNode** pSolution, IDNode* pNode, int depth);
 };
 
 #endif // _ID_DFTS_WRIGGLER_GRID_

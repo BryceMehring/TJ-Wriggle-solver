@@ -28,35 +28,23 @@ bool ID_DFTSWrigglerWrig::Load(const std::string& file)
 // Solves the wriggler puzzle using BFTS and prints the solution
 void ID_DFTSWrigglerWrig::RunAI()
 {
-	auto* pRoot = new IDNode();
-
-	IDNode* pNode = nullptr;
 	unsigned int depth = 1;
-	while(pNode == nullptr)
-	{
-		pNode = DLS(pRoot,depth++);
-	}
 
-	std::deque<IDNode*> path;
-
-	while(pNode != nullptr && pNode->pPrevious != nullptr)
+	std::deque<std::unique_ptr<IDNode>> path;
+	SearchResult result = SearchResult::Cutoff;
+	while(result == SearchResult::Cutoff)
 	{
-		path.push_front(pNode);
-		pNode = pNode->pPrevious;
+		result = DLS(depth++, path);
 	}
 
 	// Draw the path that was found
-	for(const IDNode* iter : path)
+	for(const auto& iter : path)
 	{
 		uvec2 pos = iter->move.h ? iter->positions.front() : iter->positions.back();
 		cout << m_wrigglers[iter->move.w].id << " " << !iter->move.h << " " << pos.x << " " << pos.y << endl;
 
 		MoveWriggler(iter->move);
-
-		delete iter;
 	}
-
-	delete pNode;
 
 	// Draw the final grid after movement
 	cout << *this;
@@ -65,13 +53,27 @@ void ID_DFTSWrigglerWrig::RunAI()
 	cout << path.size() << endl;
 }
 
-IDNode* ID_DFTSWrigglerWrig::DLS(IDNode* pNode, int depth)
+SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<IDNode>>& path)
+{
+	IDNode* pSolutionNode = nullptr;
+	SearchResult result = DLS(&pSolutionNode, nullptr, depth);
+
+	while(pSolutionNode != nullptr)
+	{
+		path.emplace_front(pSolutionNode);
+		pSolutionNode = pSolutionNode->pPrevious;
+	}
+
+	return result;
+}
+
+SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, int depth)
 {
 	if(depth <= 0)
-		return nullptr;
+		return SearchResult::Cutoff;
 
 	// Final state check
-	if(pNode->pPrevious != nullptr)
+	if(pNode != nullptr)
 	{
 		if(m_wrigglers[pNode->move.w].id == 0)
 		{
@@ -79,10 +81,13 @@ IDNode* ID_DFTSWrigglerWrig::DLS(IDNode* pNode, int depth)
 			uvec2 finalPos = { m_uiWidth - 1, m_uiHeight - 1 };
 			if(pNode->positions.front() == finalPos || pNode->positions.back() == finalPos)
 			{
-				return pNode;
+				*pSolution = pNode;
+				return SearchResult::Success;
 			}
 		}
 	}
+
+	bool bCutOffOccured = false;
 
 	for(unsigned int w = 0; w < GetNumWrigglers(); ++w)
 	{
@@ -95,19 +100,22 @@ IDNode* ID_DFTSWrigglerWrig::DLS(IDNode* pNode, int depth)
 				Direction dir = GetGetWrigglerTailDir(w,h);
 				if(MoveWriggler({w,h,d}))
 				{
-					if(pNode->pPrevious == nullptr || pNode->pPrevious->positions != m_wrigglers[w].positions)
+					if(pNode == nullptr || pNode->pPrevious == nullptr || pNode->pPrevious->positions != m_wrigglers[w].positions)
 					{
 						auto* pNewNode = new IDNode();
 						pNewNode->pPrevious = pNode;
 						pNewNode->move = {w,h,d};
 						pNewNode->positions = m_wrigglers[w].positions;
-						pNewNode->pPrevious->nodes.push_back(pNewNode);
 
-						IDNode* pSolutionNode = DLS(pNewNode, depth - 1);
+						SearchResult result = DLS(pSolution, pNewNode, depth - 1);
 
-						if(pSolutionNode != nullptr)
+						if(result == SearchResult::Cutoff)
 						{
-							return pSolutionNode;
+							bCutOffOccured = true;
+						}
+						else if(result != SearchResult::Failure)
+						{
+							return result;
 						}
 
 						delete pNewNode;
@@ -122,5 +130,10 @@ IDNode* ID_DFTSWrigglerWrig::DLS(IDNode* pNode, int depth)
 		}
 	}
 
-	return nullptr;
+	if(bCutOffOccured)
+	{
+		return SearchResult::Cutoff;
+	}
+
+	return SearchResult::Failure;
 }
