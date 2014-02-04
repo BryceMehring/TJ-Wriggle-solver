@@ -46,7 +46,7 @@ void ID_DFTSWrigglerWrig::RunAI()
 	// Draw the path that was found
 	for(const auto& iter : path)
 	{
-		uvec2 pos = iter->move.h ? iter->positions.front() : iter->positions.back();
+		uvec2 pos = iter->move.h ? iter->head : iter->tail;
 		cout << m_wrigglers[iter->move.w].id << " " << !iter->move.h << " " << pos.x << " " << pos.y << endl;
 
 		MoveWriggler(iter->move);
@@ -89,7 +89,7 @@ SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, std::ma
 		{
 			// Check if the blue wriggler has moved to the bottom right corner of the grid
 			uvec2 finalPos = { m_uiWidth - 1, m_uiHeight - 1 };
-			if(pNode->positions.front() == finalPos || pNode->positions.back() == finalPos)
+			if(pNode->head == finalPos || pNode->tail == finalPos)
 			{
 				*pSolution = pNode;
 				return SearchResult::Success;
@@ -118,7 +118,8 @@ SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, std::ma
 						auto* pNewNode = new IDNode();
 						pNewNode->pPrevious = pNode;
 						pNewNode->move = {w,h,d};
-						pNewNode->positions = m_wrigglers[w].positions;
+						pNewNode->head = m_wrigglers[w].positions.front();
+						pNewNode->tail = m_wrigglers[w].positions.back();
 
 						if(iter != states.end())
 						{
