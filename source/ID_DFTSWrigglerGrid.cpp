@@ -35,13 +35,13 @@ void ID_DFTSWrigglerWrig::RunAI()
 	theTimer.Start();
 
 	std::deque<std::unique_ptr<IDNode>> path;
-	SearchResult result = SearchResult::Cutoff;
-	while(result == SearchResult::Cutoff)
+
+	while(DLS(depth, path) == SearchResult::Cutoff)
 	{
-		result = DLS(depth++, path);
+		++depth;
 	}
 
-	auto wallTime = theTimer.GetTime();
+	std::uint64_t wallTime = theTimer.GetTime();
 
 	// Draw the path that was found
 	for(const auto& iter : path)
@@ -66,8 +66,11 @@ SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<IDNo
 {
 	IDNode* pSolutionNode = nullptr;
 	std::map<std::vector<std::vector<char>>,int> states;
+
+	// Try to find a solution with a limited depth
 	SearchResult result = DLS(&pSolutionNode, nullptr, states, depth);
 
+	// Loop over the solution and build the path
 	while(pSolutionNode != nullptr)
 	{
 		path.emplace_front(pSolutionNode);
@@ -99,6 +102,7 @@ SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, std::ma
 
 	bool bCutOffOccured = false;
 
+	// Try to move all of the wrigglers
 	for(unsigned int w = 0; w < GetNumWrigglers(); ++w)
 	{
 		// Try to move in all four directions
@@ -112,9 +116,12 @@ SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, std::ma
 				{
 					SearchResult result = SearchResult::Failure;
 
+					// If we have not procesed this state yet, or the path to this state is shorter
 					auto iter = states.find(m_grid);
 					if(iter == states.end() || depth > iter->second)
 					{
+						// Construct a new node for this state
+
 						auto* pNewNode = new IDNode();
 						pNewNode->pPrevious = pNode;
 						pNewNode->move = {w,h,d};
@@ -129,8 +136,11 @@ SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, std::ma
 							states[m_grid] = depth;
 						}
 
+						// Recursively apply DLS
 						result = DLS(pSolution, pNewNode, states, depth - 1);
 
+						// If we did not find a solution, then we can get rid of this node,
+						// nothing else is depending on this node anymore
 						if(result != SearchResult::Success)
 						{
 							if(result == SearchResult::Cutoff)
