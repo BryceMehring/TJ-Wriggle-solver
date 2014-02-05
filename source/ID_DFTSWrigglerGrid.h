@@ -15,7 +15,9 @@ struct IDNode
 	// Pointer to the previous Node in the tree
 	IDNode* pPrevious;
 
-	std::deque<uvec2> positions;
+	uvec2 head;
+	
+	uvec2 tail;
 
 	// Movement from the previous state to this state
 	WrigglerMove move;
