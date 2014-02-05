@@ -7,33 +7,33 @@
 #include <unordered_set>
 #include <cinttypes>
 
-// Defines a node that is part of a search tree
-struct Node
-{
-	Node() : pPrevious(nullptr)
-	{
-	}
-
-	// A list of all children of this node
-	std::vector<Node*> nodes;
-
-	// Pointer to the previous Node in the tree
-	Node* pPrevious;
-
-	// Head of the wriggler
-	uvec2 head;
-
-	// Tail of the wriggler
-	uvec2 tail;
-
-	// Movement from the previous state to this state
-	WrigglerMove move;
-};
-
 // Breadth First Tree Search Wriggler AI
 class BFTSWrigglerGrid : public WrigglerGrid
 {
 public:
+
+	// Defines a node that is part of a search tree
+	struct Node
+	{
+		Node() : pPrevious(nullptr)
+		{
+		}
+
+		// A list of all children of this node
+		std::vector<Node*> nodes;
+
+		// Pointer to the previous Node in the tree
+		Node* pPrevious;
+
+		// Head of the wriggler
+		uvec2 head;
+
+		// Tail of the wriggler
+		uvec2 tail;
+
+		// Movement from the previous state to this state
+		WrigglerMove move;
+	};
 
 	// Constructs an empty puzzle
 	BFTSWrigglerGrid();

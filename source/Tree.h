@@ -52,7 +52,7 @@ public:
 
 	// Apply's breadth first search to the tree
 	// path: the path will be written if a path is found
-	// F: Final state test functor which accepts a reference to T and returns a boolean,
+	// F: Final state test functor which returns a boolean,
 	// 'true' if this is the final state, 'false' otherwise
 	template< class F >
 	void BreadthFirstSearch(std::list<T*>& path, const F& finalStateFunctor)
@@ -70,7 +70,7 @@ public:
 			T* pTop = frontier.front();
 			frontier.pop();
 
-			if(finalStateFunctor(*pTop))
+			if(finalStateFunctor())
 			{
 				pFinalState = pTop;
 			}

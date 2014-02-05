@@ -34,7 +34,7 @@ void ID_DFTSWrigglerWrig::RunAI()
 	Timer theTimer;
 	theTimer.Start();
 
-	std::deque<std::unique_ptr<IDNode>> path;
+	std::deque<std::unique_ptr<Node>> path;
 
 	while(DLS(depth, path) == SearchResult::Cutoff)
 	{
@@ -46,10 +46,10 @@ void ID_DFTSWrigglerWrig::RunAI()
 	// Draw the path that was found
 	for(const auto& iter : path)
 	{
-		uvec2 pos = iter->move.h ? iter->head : iter->tail;
-		cout << m_wrigglers[iter->move.w].id << " " << !iter->move.h << " " << pos.x << " " << pos.y << endl;
-
 		MoveWriggler(iter->move);
+
+		uvec2 pos = iter->move.h ? m_wrigglers[iter->move.w].positions.front() : m_wrigglers[iter->move.w].positions.back();
+		cout << iter->move.w << " " << !iter->move.h << " " << pos.x << " " << pos.y << endl;
 	}
 
 	// Draw the final grid after movement
@@ -62,9 +62,9 @@ void ID_DFTSWrigglerWrig::RunAI()
 	cout << path.size() << endl;
 }
 
-SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<IDNode>>& path)
+SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<Node>>& path)
 {
-	IDNode* pSolutionNode = nullptr;
+	Node* pSolutionNode = nullptr;
 	std::map<std::vector<std::vector<char>>,int> states;
 
 	// Try to find a solution with a limited depth
@@ -80,7 +80,7 @@ SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<IDNo
 	return result;
 }
 
-SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, std::map<std::vector<std::vector<char>>,int>& states, int depth)
+SearchResult ID_DFTSWrigglerWrig::DLS(Node** pSolution, Node* pNode, std::map<std::vector<std::vector<char>>,int>& states, int depth)
 {
 	if(depth <= 0)
 		return SearchResult::Cutoff;
@@ -88,15 +88,10 @@ SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, std::ma
 	// Final state check
 	if(pNode != nullptr)
 	{
-		if(m_wrigglers[pNode->move.w].id == 0)
+		if(FinalStateCheck())
 		{
-			// Check if the blue wriggler has moved to the bottom right corner of the grid
-			uvec2 finalPos = { m_uiWidth - 1, m_uiHeight - 1 };
-			if(pNode->head == finalPos || pNode->tail == finalPos)
-			{
-				*pSolution = pNode;
-				return SearchResult::Success;
-			}
+			*pSolution = pNode;
+			return SearchResult::Success;
 		}
 	}
 
@@ -122,11 +117,9 @@ SearchResult ID_DFTSWrigglerWrig::DLS(IDNode** pSolution, IDNode* pNode, std::ma
 					{
 						// Construct a new node for this state
 
-						auto* pNewNode = new IDNode();
+						auto* pNewNode = new Node();
 						pNewNode->pPrevious = pNode;
 						pNewNode->move = {w,h,d};
-						pNewNode->head = m_wrigglers[w].positions.front();
-						pNewNode->tail = m_wrigglers[w].positions.back();
 
 						if(iter != states.end())
 						{

@@ -43,10 +43,14 @@ protected:
 	// Moves a wriggler specified by m. Returns true if the move is valid, false otherwise
 	bool MoveWriggler(const WrigglerMove& m);
 
+	// Checks if the blue wriggler has made it to the final state
+	// Returns true if successful, false otherwise
+	bool FinalStateCheck() const;
+
 	// Returns the direction that the wriggler will move away from, the opposite side of the wriggler that is set to move
 	// w: index of the wriggler
 	// bHead: true to move the head, false to move the tail
-	Direction GetGetWrigglerTailDir(unsigned int w, bool bHead);
+	Direction GetGetWrigglerTailDir(unsigned int w, bool bHead) const;
 
 private:
 

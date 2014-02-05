@@ -114,7 +114,7 @@ bool WrigglerGrid::MoveWriggler(const WrigglerMove& m)
 			wriggler.positions.pop_back();
 			wriggler.positions.push_front(newPos);
 
-			SetWrigglerTail(wriggler.positions.back(),wriggler.id);
+			SetWrigglerTail(wriggler.positions.back(),m.w);
 			SetWrigglerHead(newPos,m.d);
 		}
 		else
@@ -128,7 +128,7 @@ bool WrigglerGrid::MoveWriggler(const WrigglerMove& m)
 			wriggler.positions.push_back(newPos);
 
 			FlipTileDirection(wriggler.positions.front());
-			SetWrigglerTail(newPos,wriggler.id);
+			SetWrigglerTail(newPos,m.w);
 		}
 
 		return true;
@@ -137,7 +137,14 @@ bool WrigglerGrid::MoveWriggler(const WrigglerMove& m)
 	return false;
 }
 
-Direction WrigglerGrid::GetGetWrigglerTailDir(unsigned int w, bool bHead)
+bool WrigglerGrid::FinalStateCheck() const
+{
+	// Check if the blue wriggler has moved to the bottom right corner of the grid
+	uvec2 finalPos = { m_uiWidth - 1, m_uiHeight - 1 };
+	return (m_wrigglers[0].positions.front() == finalPos || m_wrigglers[0].positions.back() == finalPos);
+}
+
+Direction WrigglerGrid::GetGetWrigglerTailDir(unsigned int w, bool bHead) const
 {
 	// All wrigglers must have a length of at least two for this algorithm to work
 	assert((w < m_wrigglers.size()) && (m_wrigglers[w].positions.size() >= 2));
@@ -166,7 +173,7 @@ bool WrigglerGrid::Load(std::istream& stream)
 {
 	std::vector<uvec2> wrigglers = GenerateGrid(stream);
 
-	m_wrigglers.clear();
+	m_wrigglers.resize(wrigglers.size());
 
 	// Construct all the wrigglers with their paths and id
 	for(uvec2 pos : wrigglers)
@@ -186,7 +193,8 @@ bool WrigglerGrid::Load(std::istream& stream)
 			positions.push_back(pos);
 		}
 
-		m_wrigglers.push_back({std::move(positions), (unsigned int)m_grid[pos.y][pos.x] - '0'});
+		unsigned int index = (unsigned int)m_grid[pos.y][pos.x] - '0';
+		m_wrigglers[index] = {std::move(positions), index};
 	}
 
 	return (wrigglers.empty() == false);

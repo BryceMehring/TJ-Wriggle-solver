@@ -47,25 +47,9 @@ void BFTSWrigglerGrid::RunAI()
 
 	// Find a path that will solve the puzzle
 	std::list<Node*> path;
-	m_tree.BreadthFirstSearch(path,[this](const Node& n) -> bool
+	m_tree.BreadthFirstSearch(path,[this]() -> bool
 	{
-		bool bFoundFinalState = false;
-
-		// Final state check
-		if(n.pPrevious != nullptr)
-		{
-			if(m_wrigglers[n.move.w].id == 0)
-			{
-				// Check if the blue wriggler has moved to the bottom right corner of the grid
-				uvec2 finalPos = { m_uiWidth - 1, m_uiHeight - 1 };
-				if(n.head == finalPos || n.tail == finalPos)
-				{
-					bFoundFinalState = true;
-				}
-			}
-		}
-
-		return bFoundFinalState;
+		return FinalStateCheck();
 	});
 
 	m_wallTime += theTimer.GetTime();
@@ -74,7 +58,7 @@ void BFTSWrigglerGrid::RunAI()
 	for(const Node* pNode : path)
 	{
 		uvec2 pos = pNode->move.h ? pNode->head : pNode->tail;
-		cout << m_wrigglers[pNode->move.w].id << " " << !pNode->move.h << " " << pos.x << " " << pos.y << endl;
+		cout << pNode->move.w << " " << !pNode->move.h << " " << pos.x << " " << pos.y << endl;
 
 		MoveWriggler(pNode->move);
 	}
