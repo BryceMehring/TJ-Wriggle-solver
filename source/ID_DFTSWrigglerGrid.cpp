@@ -85,14 +85,10 @@ SearchResult ID_DFTSWrigglerWrig::DLS(Node** pSolution, Node* pNode, std::map<st
 	if(depth <= 0)
 		return SearchResult::Cutoff;
 
-	// Final state check
-	if(pNode != nullptr)
+	if(FinalStateCheck())
 	{
-		if(FinalStateCheck())
-		{
-			*pSolution = pNode;
-			return SearchResult::Success;
-		}
+		*pSolution = pNode;
+		return SearchResult::Success;
 	}
 
 	bool bCutOffOccured = false;

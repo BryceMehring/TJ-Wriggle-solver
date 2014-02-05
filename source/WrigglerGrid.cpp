@@ -194,6 +194,7 @@ bool WrigglerGrid::Load(std::istream& stream)
 		}
 
 		unsigned int index = (unsigned int)m_grid[pos.y][pos.x] - '0';
+		assert(index < m_wrigglers.size());
 		m_wrigglers[index] = {std::move(positions), index};
 	}
 
