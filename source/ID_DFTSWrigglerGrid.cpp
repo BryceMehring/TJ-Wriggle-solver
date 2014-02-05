@@ -5,12 +5,10 @@
 
 using namespace std;
 
-// Constructs an empty puzzle
 ID_DFTSWrigglerWrig::ID_DFTSWrigglerWrig()
 {
 }
 
-// Constructs the puzzle from the specified file
 ID_DFTSWrigglerWrig::ID_DFTSWrigglerWrig(const std::string& file)
 {
 	if(!Load(file))
@@ -19,27 +17,20 @@ ID_DFTSWrigglerWrig::ID_DFTSWrigglerWrig(const std::string& file)
 	}
 }
 
-// Loads puzzle description from the specified file
-// The old state of the grid is discarded
 bool ID_DFTSWrigglerWrig::Load(const std::string& file)
 {
 	return WrigglerGrid::Load(file);
 }
 
-// Solves the wriggler puzzle using BFTS and prints the solution
 void ID_DFTSWrigglerWrig::RunAI()
 {
-	unsigned int depth = 1;
+	std::deque<std::unique_ptr<Node>> path;
 
 	Timer theTimer;
 	theTimer.Start();
 
-	std::deque<std::unique_ptr<Node>> path;
-
-	while(DLS(depth, path) == SearchResult::Cutoff)
-	{
-		++depth;
-	}
+	// Find the solution
+	IDDFTS(path);
 
 	std::uint64_t wallTime = theTimer.GetTime();
 
@@ -62,6 +53,17 @@ void ID_DFTSWrigglerWrig::RunAI()
 	cout << path.size() << endl;
 }
 
+void ID_DFTSWrigglerWrig::IDDFTS(std::deque<std::unique_ptr<Node>>& path)
+{
+	unsigned int depth = 0;
+
+	// Keep Increasing the depth and applying DLS while we are being cut off
+	while(DLS(depth, path) == SearchResult::Cutoff)
+	{
+		++depth;
+	}
+}
+
 SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<Node>>& path)
 {
 	Node* pSolutionNode = nullptr;
@@ -82,13 +84,15 @@ SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<Node
 
 SearchResult ID_DFTSWrigglerWrig::DLS(Node** pSolution, Node* pNode, std::map<std::vector<std::vector<char>>,int>& states, int depth)
 {
-	if(depth <= 0)
-		return SearchResult::Cutoff;
-
 	if(FinalStateCheck())
 	{
 		*pSolution = pNode;
 		return SearchResult::Success;
+	}
+
+	if(depth <= 0)
+	{
+		return SearchResult::Cutoff;
 	}
 
 	bool bCutOffOccured = false;

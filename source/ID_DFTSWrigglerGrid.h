@@ -5,19 +5,20 @@
 #include <memory>
 #include <map>
 
-// Defines a node that is part of a search tree
-
+// Defines search results from Depth Limited Search
 enum class SearchResult
 {
-	Success,
-	Failure,
-	Cutoff
+	Success, // A solution is found
+	Failure, // There is no solution
+	Cutoff // No solution is found yet because of the depth limit
 };
 
+// IDDFTS Wriggler AI
 class ID_DFTSWrigglerWrig : public WrigglerGrid
 {
 public:
 
+	// Defines a node that is part of a search tree
 	struct Node
 	{
 		Node() : pPrevious(nullptr)
@@ -41,15 +42,27 @@ public:
 	// The old state of the grid is discarded
 	bool Load(const std::string& file);
 
-	// Solves the wriggler puzzle using BFTS and prints the solution
+	// Solves the wriggler puzzle using IDDFTS and prints the solution
 	virtual void RunAI();
 
 private:
-	// Depth Limited Search
-	// Returns the target node if found, else nullptr
-	// pNode: node to apply dls too
-	// depth: the depth limit
+
+	// Applies Iterative deepening depth-first search to solve the wriggler puzzle
+	// If a path is found, path will be filled with all of the nodes in the path
+	// else, path will not be modified
+	void IDDFTS(std::deque<std::unique_ptr<Node>>& path);
+
+	// Base case of the recursive Depth Limited Search algorithm
+	// depth: the detph limit
+	// path: If a solution is found, path will be filled with the nodes in the path,
+	// else, path will not be modified
 	SearchResult DLS(int depth, std::deque<std::unique_ptr<Node>>& path);
+
+	// Apply Depth Limited Search on the grid to solve the wriggler puzzle
+	// Returns the status of the search
+	// pSolution: must point to a valid Node which will be set if a path is found
+	// pNode: node to apply DLS to
+	// depth: the depth limit
 	SearchResult DLS(Node** pSolution, Node* pNode, std::map<std::vector<std::vector<char>>,int>& states, int depth);
 };
 
