@@ -139,6 +139,9 @@ bool WrigglerGrid::MoveWriggler(const WrigglerMove& m)
 
 bool WrigglerGrid::FinalStateCheck() const
 {
+	if(m_wrigglers.empty())
+		return false;
+
 	// Check if the blue wriggler has moved to the bottom right corner of the grid
 	uvec2 finalPos = { m_uiWidth - 1, m_uiHeight - 1 };
 	return (m_wrigglers[0].positions.front() == finalPos || m_wrigglers[0].positions.back() == finalPos);
