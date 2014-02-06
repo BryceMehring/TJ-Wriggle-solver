@@ -1,4 +1,4 @@
-#include "ID_DFTSWrigglerGrid.h"
+#include "IDDFTSWrigglerGrid.h"
 #include "Timer.h"
 #include <cassert>
 #include <iostream>

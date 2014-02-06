@@ -1,5 +1,5 @@
-#ifndef _ID_DFTS_WRIGGLER_GRID_
-#define _ID_DFTS_WRIGGLER_GRID_
+#ifndef _IDDFTS_WRIGGLER_GRID_
+#define _IDDFTS_WRIGGLER_GRID_
 
 #include "WrigglerGrid.h"
 #include <memory>
@@ -66,4 +66,4 @@ private:
 	SearchResult DLS(Node** pSolution, Node* pNode, std::map<std::vector<std::vector<char>>,int>& states, int depth);
 };
 
-#endif // _ID_DFTS_WRIGGLER_GRID_
+#endif // _IDDFTS_WRIGGLER_GRID_

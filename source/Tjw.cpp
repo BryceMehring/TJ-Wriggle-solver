@@ -1,5 +1,5 @@
 #include "BFTSWrigglerGrid.h"
-#include "ID_DFTSWrigglerGrid.h"
+#include "IDDFTSWrigglerGrid.h"
 #include <iostream>
 #include <cassert>
 
