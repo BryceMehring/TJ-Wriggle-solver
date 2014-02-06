@@ -67,10 +67,9 @@ void ID_DFTSWrigglerWrig::IDDFTS(std::deque<std::unique_ptr<Node>>& path)
 SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<Node>>& path)
 {
 	Node* pSolutionNode = nullptr;
-	std::map<std::vector<std::vector<char>>,int> states;
 
 	// Try to find a solution with a limited depth
-	SearchResult result = DLS(&pSolutionNode, nullptr, states, depth);
+	SearchResult result = DLS(&pSolutionNode, nullptr, depth);
 
 	// Loop over the solution and build the path
 	while(pSolutionNode != nullptr)
@@ -82,7 +81,7 @@ SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<Node
 	return result;
 }
 
-SearchResult ID_DFTSWrigglerWrig::DLS(Node** pSolution, Node* pNode, std::map<std::vector<std::vector<char>>,int>& states, int depth)
+SearchResult ID_DFTSWrigglerWrig::DLS(Node** pSolution, Node* pNode, int depth)
 {
 	if(FinalStateCheck())
 	{
@@ -109,41 +108,25 @@ SearchResult ID_DFTSWrigglerWrig::DLS(Node** pSolution, Node* pNode, std::map<st
 				Direction dir = GetGetWrigglerTailDir(w,h);
 				if(MoveWriggler({w,h,d}))
 				{
-					SearchResult result = SearchResult::Failure;
+					// Construct a new node for this state
 
-					// If we have not procesed this state yet, or the path to this state is shorter
-					auto iter = states.find(m_grid);
-					if(iter == states.end() || depth > iter->second)
+					auto* pNewNode = new Node();
+					pNewNode->pPrevious = pNode;
+					pNewNode->move = {w,h,d};
+
+					// Recursively apply DLS
+					SearchResult result = DLS(pSolution, pNewNode, depth - 1);
+
+					// If we did not find a solution, then we can get rid of this node,
+					// nothing else is depending on this node anymore
+					if(result != SearchResult::Success)
 					{
-						// Construct a new node for this state
-
-						auto* pNewNode = new Node();
-						pNewNode->pPrevious = pNode;
-						pNewNode->move = {w,h,d};
-
-						if(iter != states.end())
+						if(result == SearchResult::Cutoff)
 						{
-							iter->second = depth;
-						}
-						else
-						{
-							states[m_grid] = depth;
+							bCutOffOccured = true;
 						}
 
-						// Recursively apply DLS
-						result = DLS(pSolution, pNewNode, states, depth - 1);
-
-						// If we did not find a solution, then we can get rid of this node,
-						// nothing else is depending on this node anymore
-						if(result != SearchResult::Success)
-						{
-							if(result == SearchResult::Cutoff)
-							{
-								bCutOffOccured = true;
-							}
-
-							delete pNewNode;
-						}
+						delete pNewNode;
 					}
 
 					// Move the wriggler back as we are backtracking,

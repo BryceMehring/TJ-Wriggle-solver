@@ -63,7 +63,7 @@ private:
 	// pSolution: must point to a valid Node which will be set if a path is found
 	// pNode: node to apply DLS to
 	// depth: the depth limit
-	SearchResult DLS(Node** pSolution, Node* pNode, std::map<std::vector<std::vector<char>>,int>& states, int depth);
+	SearchResult DLS(Node** pSolution, Node* pNode, int depth);
 };
 
 #endif // _IDDFTS_WRIGGLER_GRID_
