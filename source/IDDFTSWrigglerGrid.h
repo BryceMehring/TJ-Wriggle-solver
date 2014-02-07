@@ -59,7 +59,7 @@ private:
 
 	// Apply Depth Limited Search on the grid to solve the wriggler puzzle
 	// Returns the status of the search
-	// pSolution: must point to a valid Node which will be set if a path is found
+	// pSolution: must point to a valid Node* which will be set to the final state node if a path is found
 	// pNode: node to apply DLS to
 	// depth: the depth limit
 	SearchResult DLS(Node** pSolution, Node* pNode, int depth);
