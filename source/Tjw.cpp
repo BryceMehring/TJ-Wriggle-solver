@@ -14,11 +14,37 @@ int main(int n, char** cmd)
 		return 1;
 	}
 
+	unsigned int uiAlgorithm = 0;
+	if(n >= 3)
+	{
+		uiAlgorithm = strtol(cmd[2],nullptr,10);
+		if(uiAlgorithm > 1)
+		{
+			uiAlgorithm = 0;
+		}
+	}
+
 	try
 	{
 		const char* file = cmd[1];
-		ID_DFTSWrigglerWrig puzzle(file);
-		puzzle.RunAI();
+		WrigglerGrid* pWrigglerPuzzle = nullptr;
+		switch(uiAlgorithm)
+		{
+		case 0:
+			pWrigglerPuzzle = new ID_DFTSWrigglerWrig(file);
+			break;
+		case 1:
+			pWrigglerPuzzle = new BFTSWrigglerGrid(file);
+			break;
+		default:
+			cout << "Invalid algorithm specified";
+			break;
+		}
+
+		if(pWrigglerPuzzle != nullptr)
+		{
+			pWrigglerPuzzle->RunAI();
+		}
 	}
 	catch(std::exception& exc)
 	{
