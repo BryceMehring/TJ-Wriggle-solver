@@ -110,9 +110,7 @@ SearchResult ID_DFTSWrigglerWrig::DLS(Node** pSolution, Node* pNode, int depth)
 				{
 					// Construct a new node for this state
 
-					auto* pNewNode = new Node();
-					pNewNode->pPrevious = pNode;
-					pNewNode->move = {w,h,d};
+					auto* pNewNode = new Node(pNode, {w,h,d});
 
 					// Recursively apply DLS
 					SearchResult result = DLS(pSolution, pNewNode, depth - 1);

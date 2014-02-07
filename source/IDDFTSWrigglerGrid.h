@@ -3,7 +3,6 @@
 
 #include "WrigglerGrid.h"
 #include <memory>
-#include <map>
 
 // Defines search results from Depth Limited Search
 enum class SearchResult
@@ -21,7 +20,7 @@ public:
 	// Defines a node that is part of a search tree
 	struct Node
 	{
-		Node() : pPrevious(nullptr)
+		Node(Node* pPrev, WrigglerMove m) : pPrevious(pPrev), move(m)
 		{
 		}
 
