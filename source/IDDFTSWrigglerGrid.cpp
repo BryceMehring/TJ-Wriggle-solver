@@ -5,11 +5,11 @@
 
 using namespace std;
 
-ID_DFTSWrigglerWrig::ID_DFTSWrigglerWrig()
+IDDFTSWrigglerGrid::IDDFTSWrigglerGrid()
 {
 }
 
-ID_DFTSWrigglerWrig::ID_DFTSWrigglerWrig(const std::string& file)
+IDDFTSWrigglerGrid::IDDFTSWrigglerGrid(const std::string& file)
 {
 	if(!Load(file))
 	{
@@ -17,12 +17,12 @@ ID_DFTSWrigglerWrig::ID_DFTSWrigglerWrig(const std::string& file)
 	}
 }
 
-bool ID_DFTSWrigglerWrig::Load(const std::string& file)
+bool IDDFTSWrigglerGrid::Load(const std::string& file)
 {
 	return WrigglerGrid::Load(file);
 }
 
-void ID_DFTSWrigglerWrig::RunAI()
+void IDDFTSWrigglerGrid::RunAI()
 {
 	std::deque<std::unique_ptr<Node>> path;
 
@@ -53,9 +53,9 @@ void ID_DFTSWrigglerWrig::RunAI()
 	cout << path.size() << endl;
 }
 
-void ID_DFTSWrigglerWrig::IDDFTS(std::deque<std::unique_ptr<Node>>& path)
+void IDDFTSWrigglerGrid::IDDFTS(std::deque<std::unique_ptr<Node>>& path)
 {
-	unsigned int depth = 0;
+	int depth = 0;
 
 	// Keep Increasing the depth and applying DLS while we are being cut off
 	while(DLS(depth, path) == SearchResult::Cutoff)
@@ -64,7 +64,7 @@ void ID_DFTSWrigglerWrig::IDDFTS(std::deque<std::unique_ptr<Node>>& path)
 	}
 }
 
-SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<Node>>& path)
+SearchResult IDDFTSWrigglerGrid::DLS(int depth, std::deque<std::unique_ptr<Node>>& path)
 {
 	Node* pSolutionNode = nullptr;
 
@@ -81,7 +81,7 @@ SearchResult ID_DFTSWrigglerWrig::DLS(int depth, std::deque<std::unique_ptr<Node
 	return result;
 }
 
-SearchResult ID_DFTSWrigglerWrig::DLS(Node** pSolution, Node* pNode, int depth)
+SearchResult IDDFTSWrigglerGrid::DLS(Node** pSolution, Node* pNode, int depth)
 {
 	if(FinalStateCheck())
 	{

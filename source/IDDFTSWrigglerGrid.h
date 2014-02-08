@@ -13,7 +13,7 @@ enum class SearchResult
 };
 
 // IDDFTS Wriggler AI
-class ID_DFTSWrigglerWrig : public WrigglerGrid
+class IDDFTSWrigglerGrid : public WrigglerGrid
 {
 public:
 
@@ -32,10 +32,10 @@ public:
 	};
 
 	// Constructs an empty puzzle
-	ID_DFTSWrigglerWrig();
+	IDDFTSWrigglerGrid();
 
 	// Constructs the puzzle from the specified file
-	ID_DFTSWrigglerWrig(const std::string& file);
+	IDDFTSWrigglerGrid(const std::string& file);
 
 	// Loads puzzle description from the specified file
 	// The old state of the grid is discarded

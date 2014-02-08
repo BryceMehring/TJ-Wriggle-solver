@@ -31,7 +31,7 @@ int main(int n, char** cmd)
 		switch(uiAlgorithm)
 		{
 		case 0:
-			pWrigglerPuzzle = new ID_DFTSWrigglerWrig(file);
+			pWrigglerPuzzle = new IDDFTSWrigglerGrid(file);
 			break;
 		case 1:
 			pWrigglerPuzzle = new BFTSWrigglerGrid(file);
