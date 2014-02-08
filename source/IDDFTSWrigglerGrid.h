@@ -47,14 +47,15 @@ public:
 private:
 
 	// Applies Iterative deepening depth-first search to solve the wriggler puzzle
-	// If a path is found, path will be filled with all of the nodes in the path
-	// else, path will not be modified
+	// path: If a solution is found, 'path' will be filled with the nodes in the path,
+	// else, 'path' will not be modified
 	void IDDFTS(std::deque<std::unique_ptr<Node>>& path);
 
 	// Base case of the recursive Depth Limited Search algorithm
+	// Returns the status of the search
 	// depth: the detph limit
-	// path: If a solution is found, path will be filled with the nodes in the path,
-	// else, path will not be modified
+	// path: If a solution is found, 'path' will be filled with the nodes in the path,
+	// else, 'path' will not be modified
 	SearchResult DLS(int depth, std::deque<std::unique_ptr<Node>>& path);
 
 	// Apply Depth Limited Search on the grid to solve the wriggler puzzle
