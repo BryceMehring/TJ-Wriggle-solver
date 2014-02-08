@@ -14,6 +14,7 @@ int main(int n, char** cmd)
 		return 1;
 	}
 
+	// Get the algorithm specified in the command line
 	unsigned int uiAlgorithm = 0;
 	if(n >= 3)
 	{
@@ -26,6 +27,7 @@ int main(int n, char** cmd)
 
 	try
 	{
+		// Apply the algorithm that the user specified
 		const char* file = cmd[1];
 		std::unique_ptr<WrigglerGrid> pWrigglerPuzzle = nullptr;
 		switch(uiAlgorithm)
