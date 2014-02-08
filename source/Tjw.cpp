@@ -27,14 +27,14 @@ int main(int n, char** cmd)
 	try
 	{
 		const char* file = cmd[1];
-		WrigglerGrid* pWrigglerPuzzle = nullptr;
+		std::unique_ptr<WrigglerGrid> pWrigglerPuzzle = nullptr;
 		switch(uiAlgorithm)
 		{
 		case 0:
-			pWrigglerPuzzle = new IDDFTSWrigglerGrid(file);
+			pWrigglerPuzzle.reset(new IDDFTSWrigglerGrid(file));
 			break;
 		case 1:
-			pWrigglerPuzzle = new BFTSWrigglerGrid(file);
+			pWrigglerPuzzle.reset(new BFTSWrigglerGrid(file));
 			break;
 		default:
 			cout << "Invalid algorithm specified";
