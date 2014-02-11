@@ -37,10 +37,6 @@ public:
 	// Constructs the puzzle from the specified file
 	IDDFTSWrigglerGrid(const std::string& file);
 
-	// Loads puzzle description from the specified file
-	// The old state of the grid is discarded
-	bool Load(const std::string& file);
-
 	// Solves the wriggler puzzle using IDDFTS and prints the solution
 	virtual void RunAI();
 

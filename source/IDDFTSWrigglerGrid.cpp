@@ -17,11 +17,6 @@ IDDFTSWrigglerGrid::IDDFTSWrigglerGrid(const std::string& file)
 	}
 }
 
-bool IDDFTSWrigglerGrid::Load(const std::string& file)
-{
-	return WrigglerGrid::Load(file);
-}
-
 void IDDFTSWrigglerGrid::RunAI()
 {
 	std::deque<std::unique_ptr<Node>> path;
