@@ -108,7 +108,7 @@ private:
 protected:
 
 	// Grid containing all of the tiles
-	std::vector<std::vector<char>> m_grid;
+	std::vector<std::string> m_grid;
 
 	// List containing all of the wrigglers
 	std::vector<Wriggler> m_wrigglers;

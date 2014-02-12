@@ -1,5 +1,6 @@
 #include "BFTSWrigglerGrid.h"
 #include "IDDFTSWrigglerGrid.h"
+#include "GBFGSWrigglerGrid.h"
 #include <iostream>
 #include <cassert>
 
@@ -33,9 +34,12 @@ int main(int n, char** cmd)
 		switch(uiAlgorithm)
 		{
 		case 0:
-			pWrigglerPuzzle.reset(new IDDFTSWrigglerGrid(file));
+			pWrigglerPuzzle.reset(new GBFGSWrigglerGrid(file));
 			break;
 		case 1:
+			pWrigglerPuzzle.reset(new IDDFTSWrigglerGrid(file));
+			break;
+		case 2:
 			pWrigglerPuzzle.reset(new BFTSWrigglerGrid(file));
 			break;
 		default:
