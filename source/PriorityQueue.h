@@ -7,8 +7,7 @@
 
 namespace cds
 {
-	// A self updating priority queue
-	// Behavior is the same as std::priority_queue execpt for one small difference with Push()
+	// Defines a self updating priority queue
 	template< class T,
 			  class Compare = std::less<T>,
 			  class Hash = std::hash<T>,
@@ -25,6 +24,8 @@ namespace cds
 		// Returns true if the queue is empty
 		bool Empty() const { return m_data.empty(); }
 
+		// Finds 'data' within the queue. If 'data' is found, out will be set to the element that was found in the queue.
+		// Returns true if 'data' is found, false otherwise
 		bool Find(const T& data, T& out) const
 		{
 			auto iter = m_index.find(data);
@@ -36,26 +37,16 @@ namespace cds
 			return (iter != m_index.end());
 		}
 
-		// Adds data if it is not already in the queue
-		// If data is already in the queue, then it is moved to its correct location to satisfy
-		// the heap property
+		// Adds 'data' into the queue
 		void Push(const T& data)
 		{
-			auto indexIter = m_index.find(data);
-			if (indexIter != m_index.end())
-			{
-				Update(indexIter->second);
-			}
-			else
-			{
-				int i = m_data.size();
+			int i = m_data.size();
 
-				m_data.push_back(data);
-				m_index[data] = i;
+			m_data.push_back(data);
+			m_index[data] = i;
 
-				// Heapify
-				PushUp(i);
-			}
+			// Heapify
+			PushUp(i);
 		}
 
 		// Removes the highest priority element
@@ -73,6 +64,16 @@ namespace cds
 
 			// Heapify
 			PushDown(0);
+		}
+
+		// Moves 'data' to it's correct location to satisfy the queue priority
+		void Update(const T& data)
+		{
+			auto iter = m_index.find(data);
+			if(iter != m_index.end())
+			{
+				Update(iter->second);
+			}
 		}
 
 	private:

@@ -107,7 +107,7 @@ void GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::f
 								frontier.Push(pNewNode);
 							}
 							// If the node is in the frontier
-							else if(frontier.Find(pNode, pFrontierNode))
+							else if(pFrontierNode != nullptr || frontier.Find(pNode, pFrontierNode))
 							{
 								// If this is a better path
 								if(hCost < pFrontierNode->m_iHCost)
@@ -119,7 +119,7 @@ void GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::f
 									pFrontierNode->m_iHCost = hCost;
 									pFrontierNode->m_iGCost = pNode->m_iGCost + 1;
 
-									frontier.Push(pFrontierNode);
+									frontier.Update(pFrontierNode);
 								}
 							}
 
