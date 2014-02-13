@@ -11,22 +11,6 @@
 
 using namespace std;
 
-class GridHash
-{
-public:
-
-	std::size_t operator()(const std::vector<std::string>& grid) const
-	{
-		std::size_t h = 101;
-		for(const auto& iter : grid)
-		{
-			h += std::hash<std::string>()(iter);
-		}
-
-		return h;
-	}
-};
-
 GBFGSWrigglerGrid::GBFGSWrigglerGrid()
 {
 }
@@ -41,34 +25,27 @@ GBFGSWrigglerGrid::GBFGSWrigglerGrid(const std::string& file)
 
 void GBFGSWrigglerGrid::RunAI()
 {
-
 	 Timer theTimer;
 	 theTimer.Start();
 
-	 Node* pFinalNode = GBFGS([this](const uvec2& pos) -> int
+	 std::deque<GBFGSWrigglerGrid*> path;
+
+	 GBFGS(path,[this](const uvec2& pos) -> int
 	 {
 		uvec2 goal = { m_uiWidth - 1, m_uiHeight - 1 };
 		unsigned int dx = abs((int)pos.x - (int)goal.x);
 		unsigned int dy = abs((int)pos.y - (int)goal.y);
-		return (dx + dy);
+		return (dx + dy) * 4;
 	 });
 
 	 auto wallTime = theTimer.GetTime();
 
-	 std::deque<Node*> path;
-
-	 while(pFinalNode != nullptr && pFinalNode->pPrevious != nullptr)
-	 {
-		path.emplace_front(pFinalNode);
-		pFinalNode = pFinalNode->pPrevious;
-	 }
-
 	 for(const auto& iter : path)
 	 {
-		 uvec2 pos = iter->move.h ? iter->state.m_wrigglers[iter->move.w].positions.front() : iter->state.m_wrigglers[iter->move.w].positions.back();
-		 cout << iter->move.w << " " << !iter->move.h << " " << pos.x << " " << pos.y << endl;
+		 uvec2 pos = iter->m_move.h ? iter->m_wrigglers[iter->m_move.w].positions.front() : iter->m_wrigglers[iter->m_move.w].positions.back();
+		 cout << iter->m_move.w << " " << !iter->m_move.h << " " << pos.x << " " << pos.y << endl;
 
-		 MoveWriggler(iter->move);
+		 MoveWriggler(iter->m_move);
 	 }
 
 	 cout << *this;
@@ -79,28 +56,26 @@ void GBFGSWrigglerGrid::RunAI()
 
 }
 
-Node* GBFGSWrigglerGrid::GBFGS(const std::function<int(const uvec2&)>& heuristic) const
+void GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic)
 {
-	cds::PriorityQueue<Node*, std::vector<Node*>, NodeComparer> frontier;
-	std::unordered_map<std::vector<std::string>, Node*, GridHash> frontierList;
-	std::unordered_map<std::vector<std::string>,Node*, GridHash> closedList;
+	cds::PriorityQueue<GBFGSWrigglerGrid*, GBFGSWrigglerGridSorter, GBFGSWrigglerGridHash, GBFGSWrigglerGridEqual> frontier;
+	std::unordered_set<GBFGSWrigglerGrid*, GBFGSWrigglerGridHash, GBFGSWrigglerGridEqual> closedList;
 	bool bFoundSolution = false;
 
-	frontier.Push(new Node{nullptr, *this,{},0,0});
+	frontier.Push(this);
 
-	Node* pFinalNode = nullptr;
+	GBFGSWrigglerGrid* pFinalNode = nullptr;
 
 	while(!bFoundSolution && !frontier.Empty())
 	{
-		Node* pNode = pFinalNode = frontier.Top();
+		GBFGSWrigglerGrid* pNode = pFinalNode = frontier.Top();
 		frontier.Pop();
 
-		frontierList.erase(pNode->state.m_grid);
-		closedList.insert({pNode->state.m_grid, pNode});
+		closedList.insert(pNode);
 
 		// If goal test pNode is true
 		// return solution
-		bFoundSolution = pNode->state.FinalStateCheck();
+		bFoundSolution = pNode->FinalStateCheck();
 		if(!bFoundSolution)
 		{
 			// Try to move all of the wrigglers
@@ -112,39 +87,45 @@ Node* GBFGSWrigglerGrid::GBFGS(const std::function<int(const uvec2&)>& heuristic
 					// Try to move the head and the tail
 					for(bool h : {true, false})
 					{
-						Direction dir = pNode->state.GetGetWrigglerTailDir(w,h);
-						if(pNode->state.MoveWriggler({w,h,d}))
+						Direction dir = pNode->GetGetWrigglerTailDir(w,h);
+						if(pNode->MoveWriggler({w,h,d}))
 						{
-							int hCost = std::min(heuristic(pNode->state.m_wrigglers[0].positions.front()),
-												 heuristic(pNode->state.m_wrigglers[0].positions.back()));
+							int hCost = std::min(heuristic(pNode->m_wrigglers[0].positions.front()),
+												 heuristic(pNode->m_wrigglers[0].positions.back()));
 
-							if(closedList.find(pNode->state.m_grid) == closedList.end() && frontierList.find(pNode->state.m_grid) == frontierList.end())
+							GBFGSWrigglerGrid* pFrontierNode = nullptr;
+
+							// If the node is not in the closed list or the frontier
+							if(closedList.find(pNode) == closedList.end() && !frontier.Find(pNode,pFrontierNode))
 							{
-								auto* pNewNode = new Node(pNode, pNode->state, {w,h,d}, hCost, pNode->gCost + 1);
+								auto* pNewNode = new GBFGSWrigglerGrid(*pNode);
+								pNewNode->m_pPrevious = pNode;
+								pNewNode->m_move = {w,h,d};
+								pNewNode->m_iGCost += 1;
+								pNewNode->m_iHCost = hCost;
 
 								frontier.Push(pNewNode);
-								frontierList.insert({pNewNode->state.m_grid, pNewNode});
 							}
-							else
+							// If the node is in the frontier
+							else if(frontier.Find(pNode, pFrontierNode))
 							{
-								auto frontierIter = frontierList.find(pNode->state.m_grid);
-								if(frontierIter != frontierList.end())
+								// If this is a better path
+								if(hCost < pFrontierNode->m_iHCost)
 								{
-									if((hCost) < (frontierIter->second->hCost))
-									{
-										frontierIter->second->pPrevious = pNode;
-										frontierIter->second->move = {w,h,d};
-										frontierIter->second->hCost = hCost;
-										frontierIter->second->gCost = pNode->gCost + 1;
+									// Switch path to this node
 
-										frontier.Push(frontierIter->second);
-									}
+									pFrontierNode->m_pPrevious = pNode;
+									pFrontierNode->m_move = {w,h,d};
+									pFrontierNode->m_iHCost = hCost;
+									pFrontierNode->m_iGCost = pNode->m_iGCost + 1;
+
+									frontier.Push(pFrontierNode);
 								}
 							}
 
 							// Move the wriggler back as we are backtracking,
 							// if this wriggler fails to move, then something is really wrong
-							bool bMovedBack = pNode->state.MoveWriggler({w,!h,dir});
+							bool bMovedBack = pNode->MoveWriggler({w,!h,dir});
 							assert("Cannot move wriggler back" && bMovedBack);
 						}
 					}
@@ -157,7 +138,32 @@ Node* GBFGSWrigglerGrid::GBFGS(const std::function<int(const uvec2&)>& heuristic
 
 	cout << closedList.size() << endl;
 
-	return pFinalNode;
+	while(pFinalNode != nullptr && pFinalNode->m_pPrevious != nullptr)
+	{
+	   path.push_front(pFinalNode);
+	   pFinalNode = pFinalNode->m_pPrevious;
+	}
+}
+
+bool GBFGSWrigglerGridSorter::operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const
+{
+	return (a->m_iHCost) > (b->m_iHCost);
+}
+
+std::size_t GBFGSWrigglerGridHash::operator()(const GBFGSWrigglerGrid* data) const
+{
+	std::size_t h = 101;
+	for(const auto& iter : data->m_grid)
+	{
+		h += std::hash<std::string>()(iter);
+	}
+
+	return h;
+}
+
+std::size_t GBFGSWrigglerGridEqual::operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const
+{
+	return a->m_grid == b->m_grid;
 }
 
 

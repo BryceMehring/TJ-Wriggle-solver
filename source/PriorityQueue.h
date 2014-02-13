@@ -3,12 +3,17 @@
 
 #include <vector>
 #include <unordered_map>
+#include <functional>
 
 namespace cds
 {
 	// A self updating priority queue
 	// Behavior is the same as std::priority_queue execpt for one small difference with Push()
-	template< class T, class Container = std::vector<T>, class Compare = std::less<T> >
+	template< class T,
+			  class Compare = std::less<T>,
+			  class Hash = std::hash<T>,
+			  class Eq = std::equal_to<T>,
+			  class Container = std::vector<T> >
 	class PriorityQueue
 	{
 	public:
@@ -20,9 +25,15 @@ namespace cds
 		// Returns true if the queue is empty
 		bool Empty() const { return m_data.empty(); }
 
-		bool Find(const T& data) const
+		bool Find(const T& data, T& out) const
 		{
-			return (m_index.find(data) != m_index.end());
+			auto iter = m_index.find(data);
+			if(iter != m_index.end())
+			{
+				out = m_data[iter->second];
+			}
+
+			return (iter != m_index.end());
 		}
 
 		// Adds data if it is not already in the queue
@@ -70,7 +81,7 @@ namespace cds
 		Container m_data;
 
 		// Mappings from T to the index in the heap
-		std::unordered_map<T, unsigned int> m_index;
+		std::unordered_map<T, unsigned int, Hash, Eq> m_index;
 		static const Compare s_compareFunctor;
 
 		// Returns true if the element at index root can be pushed up in the heap
@@ -166,8 +177,8 @@ namespace cds
 		}
 	};
 
-	template< class T, class Container, class Compare >
-	const Compare PriorityQueue<T, Container, Compare>::s_compareFunctor;
+	template< class T, class Compare, class Hash, class Eq, class Container >
+	const Compare PriorityQueue<T, Compare, Hash, Eq, Container>::s_compareFunctor;
 }
 
 #endif // _PRIORITYQUEUE_

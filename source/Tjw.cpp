@@ -20,7 +20,7 @@ int main(int n, char** cmd)
 	if(n >= 3)
 	{
 		uiAlgorithm = strtol(cmd[2],nullptr,10);
-		if(uiAlgorithm > 1)
+		if(uiAlgorithm > 2)
 		{
 			uiAlgorithm = 0;
 		}

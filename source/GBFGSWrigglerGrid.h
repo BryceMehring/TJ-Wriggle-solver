@@ -4,11 +4,14 @@
 #include "WrigglerGrid.h"
 #include <functional>
 
-class Node;
-
 class GBFGSWrigglerGrid : public WrigglerGrid
 {
 public:
+
+	friend class GBFGSWrigglerGridSorter;
+	friend class GBFGSWrigglerGridHash;
+	friend class GBFGSWrigglerGridEqual;
+
 	// Constructs an empty puzzle
 	GBFGSWrigglerGrid();
 
@@ -20,37 +23,38 @@ public:
 
 private:
 
-	Node* GBFGS(const std::function<int(const uvec2&)>& heuristic) const;
+	void GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic);
 
+	GBFGSWrigglerGrid* m_pPrevious = nullptr;
+
+	WrigglerMove m_move;
+
+	int m_iHCost = 0;
+	int m_iGCost = 0;
 };
 
-// Defines a node that is part of a search tree
-struct Node
-{
-	Node(Node* pPrev, const GBFGSWrigglerGrid& s, WrigglerMove m, int h, int g) : pPrevious(pPrev), state(s), move(m), hCost(h), gCost(g)
-	{
-	}
-
-	// Pointer to the previous Node in the tree
-	Node* pPrevious;
-
-	GBFGSWrigglerGrid state;
-
-	// Movement from the previous state to this state
-	WrigglerMove move;
-
-	int hCost;
-	int gCost;
-};
-
-class NodeComparer
+// Defines how states are going to be sorted in the priority queue
+class GBFGSWrigglerGridSorter
 {
 public:
 
-	bool operator()(const Node* a, const Node* b) const
-	{
-		return (a->hCost) > (b->hCost);
-	}
+	bool operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const;
+};
+
+// Defines the hash for a Wriggler State
+class GBFGSWrigglerGridHash
+{
+public:
+
+	std::size_t operator()(const GBFGSWrigglerGrid* data) const;
+};
+
+// Defines the equality check for Wriggler States
+class GBFGSWrigglerGridEqual
+{
+public:
+
+	std::size_t operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const;
 };
 
 #endif // _UCGS_WRIGGLER_GRID_
