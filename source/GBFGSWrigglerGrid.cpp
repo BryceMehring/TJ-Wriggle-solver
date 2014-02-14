@@ -2,12 +2,9 @@
 #include "PriorityQueue.h"
 #include "Timer.h"
 #include <cassert>
-#include <map>
 
 #include <iostream>
-#include <unordered_map>
 #include <unordered_set>
-#include <memory>
 
 using namespace std;
 
@@ -35,7 +32,7 @@ void GBFGSWrigglerGrid::RunAI()
 		uvec2 goal = { m_uiWidth - 1, m_uiHeight - 1 };
 		unsigned int dx = abs((int)pos.x - (int)goal.x);
 		unsigned int dy = abs((int)pos.y - (int)goal.y);
-		return (dx + dy) * 4;
+		return (dx + dy);
 	 });
 
 	 auto wallTime = theTimer.GetTime();
@@ -136,12 +133,13 @@ void GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::f
 
 	}
 
-	cout << closedList.size() << endl;
-
-	while(pFinalNode != nullptr && pFinalNode->m_pPrevious != nullptr)
+	if(bFoundSolution)
 	{
-	   path.push_front(pFinalNode);
-	   pFinalNode = pFinalNode->m_pPrevious;
+		while(pFinalNode != nullptr && pFinalNode->m_pPrevious != nullptr)
+		{
+		   path.push_front(pFinalNode);
+		   pFinalNode = pFinalNode->m_pPrevious;
+		}
 	}
 }
 

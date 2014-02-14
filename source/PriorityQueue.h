@@ -21,6 +21,8 @@ namespace cds
 		T& Top() { return m_data.front(); }
 		const T& Top() const { return m_data.front(); }
 
+		unsigned int Size() const { return m_data.size(); }
+
 		// Returns true if the queue is empty
 		bool Empty() const { return m_data.empty(); }
 
