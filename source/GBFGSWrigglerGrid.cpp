@@ -57,90 +57,87 @@ void GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::f
 {
 	cds::PriorityQueue<GBFGSWrigglerGrid*, GBFGSWrigglerGridSorter, GBFGSWrigglerGridHash, GBFGSWrigglerGridEqual> frontier;
 	std::unordered_set<GBFGSWrigglerGrid*, GBFGSWrigglerGridHash, GBFGSWrigglerGridEqual> closedList;
-	bool bFoundSolution = false;
-
-	frontier.Push(this);
 
 	GBFGSWrigglerGrid* pFinalNode = nullptr;
 
-	while(!bFoundSolution && !frontier.Empty())
-	{
-		GBFGSWrigglerGrid* pNode = pFinalNode = frontier.Top();
-		frontier.Pop();
+	frontier.Push(this);
 
-		closedList.insert(pNode);
+	while(!frontier.Empty())
+	{
+		GBFGSWrigglerGrid* pNode = frontier.Top();
+		frontier.Pop();
 
 		// If goal test pNode is true
 		// return solution
-		bFoundSolution = pNode->FinalStateCheck();
-		if(!bFoundSolution)
+		if(pNode->FinalStateCheck())
 		{
-			// Try to move all of the wrigglers
-			for(unsigned int w = 0; w < GetNumWrigglers(); ++w)
+			pFinalNode = pNode;
+			break;
+		}
+
+		closedList.insert(pNode);
+
+		// Try to move all of the wrigglers
+		for(unsigned int w = 0; w < GetNumWrigglers(); ++w)
+		{
+			// Try to move in all four directions
+			for(Direction d : {Up, Down, Left, Right})
 			{
-				// Try to move in all four directions
-				for(Direction d : {Up, Down, Left, Right})
+				// Try to move the head and the tail
+				for(bool h : {true, false})
 				{
-					// Try to move the head and the tail
-					for(bool h : {true, false})
+					Direction dir = pNode->GetGetWrigglerTailDir(w,h);
+					if(pNode->MoveWriggler({w,h,d}))
 					{
-						Direction dir = pNode->GetGetWrigglerTailDir(w,h);
-						if(pNode->MoveWriggler({w,h,d}))
+						int hCost = std::min(heuristic(pNode->m_wrigglers[0].positions.front()),
+											 heuristic(pNode->m_wrigglers[0].positions.back()));
+
+						GBFGSWrigglerGrid* pFrontierNode = nullptr;
+
+						// If the node is not in the closed list or the frontier
+						if(closedList.find(pNode) == closedList.end() && !frontier.Find(pNode,pFrontierNode))
 						{
-							int hCost = std::min(heuristic(pNode->m_wrigglers[0].positions.front()),
-												 heuristic(pNode->m_wrigglers[0].positions.back()));
+							auto* pNewNode = new GBFGSWrigglerGrid(*pNode);
+							pNewNode->m_pPrevious = pNode;
+							pNewNode->m_move = {w,h,d};
+							pNewNode->m_iGCost += 1;
+							pNewNode->m_iHCost = hCost;
 
-							GBFGSWrigglerGrid* pFrontierNode = nullptr;
-
-							// If the node is not in the closed list or the frontier
-							if(closedList.find(pNode) == closedList.end() && !frontier.Find(pNode,pFrontierNode))
-							{
-								auto* pNewNode = new GBFGSWrigglerGrid(*pNode);
-								pNewNode->m_pPrevious = pNode;
-								pNewNode->m_move = {w,h,d};
-								pNewNode->m_iGCost += 1;
-								pNewNode->m_iHCost = hCost;
-
-								frontier.Push(pNewNode);
-							}
-							// If the node is in the frontier
-							else if(pFrontierNode != nullptr || frontier.Find(pNode, pFrontierNode))
-							{
-								// If this is a better path
-								if(hCost < pFrontierNode->m_iHCost)
-								{
-									// Switch path to this node
-
-									pFrontierNode->m_pPrevious = pNode;
-									pFrontierNode->m_move = {w,h,d};
-									pFrontierNode->m_iHCost = hCost;
-									pFrontierNode->m_iGCost = pNode->m_iGCost + 1;
-
-									frontier.Update(pFrontierNode);
-								}
-							}
-
-							// Move the wriggler back as we are backtracking,
-							// if this wriggler fails to move, then something is really wrong
-							bool bMovedBack = pNode->MoveWriggler({w,!h,dir});
-							assert("Cannot move wriggler back" && bMovedBack);
+							frontier.Push(pNewNode);
 						}
+						// If the node is in the frontier
+						else if(pFrontierNode != nullptr || frontier.Find(pNode, pFrontierNode))
+						{
+							// If this is a better path
+							if(hCost < pFrontierNode->m_iHCost)
+							{
+								// Switch path to this node
+
+								pFrontierNode->m_pPrevious = pNode;
+								pFrontierNode->m_move = {w,h,d};
+								pFrontierNode->m_iHCost = hCost;
+								pFrontierNode->m_iGCost = pNode->m_iGCost + 1;
+
+								frontier.Update(pFrontierNode);
+							}
+						}
+
+						// Move the wriggler back as we are backtracking,
+						// if this wriggler fails to move, then something is really wrong
+						bool bMovedBack = pNode->MoveWriggler({w,!h,dir});
+						assert("Cannot move wriggler back" && bMovedBack);
 					}
 				}
 			}
-
 		}
-
 	}
 
-	if(bFoundSolution)
+	while(pFinalNode != nullptr && pFinalNode->m_pPrevious != nullptr)
 	{
-		while(pFinalNode != nullptr && pFinalNode->m_pPrevious != nullptr)
-		{
-		   path.push_front(pFinalNode);
-		   pFinalNode = pFinalNode->m_pPrevious;
-		}
+	   path.push_front(pFinalNode);
+	   pFinalNode = pFinalNode->m_pPrevious;
 	}
+
 }
 
 bool GBFGSWrigglerGridSorter::operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const
