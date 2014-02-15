@@ -79,6 +79,8 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 
 		closedList.insert(pNode);
 
+		GBFGSWrigglerGrid topGrid = *pNode;
+
 		// Try to move all of the wrigglers
 		for(unsigned int w = 0; w < GetNumWrigglers(); ++w)
 		{
@@ -88,18 +90,18 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 				// Try to move the head and the tail
 				for(bool h : {true, false})
 				{
-					Direction dir = pNode->GetGetWrigglerTailDir(w,h);
-					if(pNode->MoveWriggler({w,h,d}))
+					Direction dir = topGrid.GetGetWrigglerTailDir(w,h);
+					if(topGrid.MoveWriggler({w,h,d}))
 					{
-						int hCost = std::min(heuristic(pNode->m_wrigglers[0].positions.front()),
-											 heuristic(pNode->m_wrigglers[0].positions.back()));
+						int hCost = std::min(heuristic(topGrid.m_wrigglers[0].positions.front()),
+											 heuristic(topGrid.m_wrigglers[0].positions.back()));
 
 						GBFGSWrigglerGrid* pFrontierNode = nullptr;
 
 						// If the node is not in the closed list or the frontier
-						if(closedList.find(pNode) == closedList.end() && !frontier.Find(pNode,pFrontierNode))
+						if(closedList.find(&topGrid) == closedList.end() && !frontier.Find(&topGrid,pFrontierNode))
 						{
-							auto* pNewNode = new GBFGSWrigglerGrid(*pNode);
+							auto* pNewNode = new GBFGSWrigglerGrid(topGrid);
 
 							pNewNode->m_pPrevious = pNode;
 							pNewNode->m_move = {w,h,d};
@@ -129,7 +131,7 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 
 						// Move the wriggler back as we are backtracking,
 						// if this wriggler fails to move, then something is really wrong
-						bool bMovedBack = pNode->MoveWriggler({w,!h,dir});
+						bool bMovedBack = topGrid.MoveWriggler({w,!h,dir});
 						assert("Cannot move wriggler back" && bMovedBack);
 					}
 				}
