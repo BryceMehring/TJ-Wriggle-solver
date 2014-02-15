@@ -5,6 +5,7 @@
 #include <functional>
 #include <memory>
 
+// Graph Search Wriggler AI, algorithm depends on the mode set via GraphSearchWrigglerGridSorter::SetMode()
 class GraphSearchWrigglerGrid : public WrigglerGrid
 {
 public:
