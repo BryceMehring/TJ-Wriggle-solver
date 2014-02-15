@@ -1,5 +1,5 @@
 HEADERS += source/BFTSWrigglerGrid.h \
-			source/GBFGSWrigglerGrid.h \
+			source/GraphSearchWrigglerGrid.h \
 			source/IDDFTSWrigglerGrid.h \
 			source/PriorityQueue.h \
 			source/Timer.h \
@@ -9,7 +9,7 @@ HEADERS += source/BFTSWrigglerGrid.h \
 			source/WrigglerGrid.h
 
 SOURCES = source/BFTSWrigglerGrid.cpp \
-		  source/GBFGSWrigglerGrid.cpp \
+		  source/GraphSearchWrigglerGrid.cpp \
 		  source/IDDFTSWrigglerGrid.cpp \
 		  source/Timer.cpp \
 		  source/Tjw.cpp \
