@@ -9,11 +9,11 @@
 using std::cout;
 using std::endl;
 
-GBFGSWrigglerGrid::GBFGSWrigglerGrid() : m_pPrevious(nullptr), m_iHCost(0), m_iGCost(0)
+GBFGSWrigglerGrid::GBFGSWrigglerGrid() : m_pPrevious(nullptr), m_iGCost(0), m_iHCost(0)
 {
 }
 
-GBFGSWrigglerGrid::GBFGSWrigglerGrid(const std::string& file) : m_pPrevious(nullptr), m_iHCost(0), m_iGCost(0)
+GBFGSWrigglerGrid::GBFGSWrigglerGrid(const std::string& file) : m_pPrevious(nullptr), m_iGCost(0), m_iHCost(0)
 {
 	if(!Load(file))
 	{
@@ -118,11 +118,10 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 							if(hCost < pFrontierNode->m_iHCost)
 							{
 								// Switch path to this node
-
 								pFrontierNode->m_pPrevious = pNode;
 								pFrontierNode->m_move = {w,h,d};
-								pFrontierNode->m_iHCost = hCost;
 								pFrontierNode->m_iGCost = pNode->m_iGCost + 1;
+								pFrontierNode->m_iHCost = hCost;
 
 								frontier.Update(pFrontierNode);
 							}

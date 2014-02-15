@@ -29,8 +29,8 @@ private:
 	GBFGSWrigglerGrid* m_pPrevious;
 	WrigglerMove m_move;
 
-	int m_iHCost;
 	int m_iGCost;
+	int m_iHCost;
 
 	friend class GBFGSWrigglerGridSorter;
 	friend class GBFGSWrigglerGridHash;
