@@ -33,8 +33,8 @@ void GBFGSWrigglerGrid::RunAI()
 	 auto states = GBFGS(path,[this](const uvec2& pos) -> int
 	 {
 		uvec2 goal = { m_uiWidth - 1, m_uiHeight - 1 };
-		unsigned int dx = abs((int)pos.x - (int)goal.x);
-		unsigned int dy = abs((int)pos.y - (int)goal.y);
+		int dx = abs((int)pos.x - (int)goal.x);
+		int dy = abs((int)pos.y - (int)goal.y);
 		return (dx + dy);
 	 });
 
