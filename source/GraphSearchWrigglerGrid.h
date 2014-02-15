@@ -1,5 +1,5 @@
-#ifndef _UCGS_WRIGGLER_GRID_
-#define _UCGS_WRIGGLER_GRID_
+#ifndef _GRAPH_SEARCH_WRIGGLER_GRID_
+#define _GRAPH_SEARCH_WRIGGLER_GRID_
 
 #include "WrigglerGrid.h"
 #include <functional>
@@ -15,13 +15,13 @@ public:
 	// Constructs the puzzle from the specified file
 	GraphSearchWrigglerGrid(const std::string& file);
 
-	// Solves the wriggler puzzle using GBFGS and prints the solution
+	// Solves the wriggler puzzle and prints the solution
 	virtual void RunAI();
 
 private:
 
-	// Applies Greedy Best First Graph Search or Uniform Cost Graph Search to solve the wriggler puzzle
-	// To change the mode of operation, call GBFGSWrigglerGridSorter::SetMode()
+	// Finds a path to solve the wriggler puzzle
+	// To change the mode of operation, call GraphSearchWrigglerGridSorter::SetMode()
 	// Returns all of the states in the graph
 	// path: If a solution is found, 'path' will be filled with the nodes in the path, else, 'path' will not be modified
 	// heuristic: a function which accepts an uvec2 and returns the estimated distance to the solution
@@ -90,4 +90,4 @@ public:
 	std::size_t operator()(const GraphSearchWrigglerGrid* a, const GraphSearchWrigglerGrid* b) const;
 };
 
-#endif // _UCGS_WRIGGLER_GRID_
+#endif // _GRAPH_SEARCH_WRIGGLER_GRID_
