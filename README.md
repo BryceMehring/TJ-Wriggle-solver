@@ -11,8 +11,9 @@ How to compile the code:
  * The second argument specifies the algorithm used:
  
         0 - Greedy best-first graph search (default)
-        1 - Iterative deepening depth-first tree search
-        2 - Breadth-first tree search
+        1 - Uniform-cost graph search
+        2 - Iterative deepening depth-first tree search
+        3 - Breadth-first tree search
 
  * To output the solution to a file, one must redirect it.
  * Example usage: ./tjw puzzle.txt 1 > out.txt
