@@ -25,7 +25,18 @@ private:
 	// Returns all of the states in the graph
 	// path: If a solution is found, 'path' will be filled with the nodes in the path, else, 'path' will not be modified
 	// heuristic: a function which accepts an uvec2 and returns the estimated distance to the solution
-	std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> GBFGS(std::deque<GraphSearchWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic);
+	std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> FindPath(std::deque<GraphSearchWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic);
+
+	// Returns true if 'pFrontierNode' has a higher cost than moving from 'pPreviousNode', false otherwise
+	// pFrontierNode: node in frontier
+	// pPreviousNode: previous node from the current node
+	// heuristic: estimated distance to the solution from the current node
+	bool LowerPathCheck(const GraphSearchWrigglerGrid* pFrontierNode, const GraphSearchWrigglerGrid* pPreviousNode, int heuristic) const;
+
+	// Follows the parents of 'pFinalNode' up to the root and inserts them into 'path'
+	// pFinalNode: the final state node
+	// path: output where the path is stored
+	void BuildPath(GraphSearchWrigglerGrid* pFinalNode, std::deque<GraphSearchWrigglerGrid*>& path);
 
 	GraphSearchWrigglerGrid* m_pPrevious;
 	WrigglerMove m_move;

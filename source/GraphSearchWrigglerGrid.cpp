@@ -31,7 +31,7 @@ void GraphSearchWrigglerGrid::RunAI()
 	 std::deque<GraphSearchWrigglerGrid*> path;
 
 	 // Find path with custom heuristic
-	 auto states = GBFGS(path,[this](const uvec2& pos) -> int
+	 auto states = FindPath(path,[this](const uvec2& pos) -> int
 	 {
 		uvec2 goal = { m_uiWidth - 1, m_uiHeight - 1 };
 		int dx = abs((int)pos.x - (int)goal.x);
@@ -60,7 +60,7 @@ void GraphSearchWrigglerGrid::RunAI()
 	 cout << path.size() << endl;
 }
 
-std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> GraphSearchWrigglerGrid::GBFGS(std::deque<GraphSearchWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic)
+std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> GraphSearchWrigglerGrid::FindPath(std::deque<GraphSearchWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic)
 {
 	std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> states;
 
@@ -121,21 +121,8 @@ std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> GraphSearchWrigglerGrid::G
 						// If the node is in the frontier
 						else if(pFrontierNode != nullptr || frontier.Find(&topGrid, pFrontierNode))
 						{
-							GraphSearchWrigglerGridSorter::Mode mode = GraphSearchWrigglerGridSorter::GetMode();
-							bool bShorterPath = false;
-
-							switch(mode)
-							{
-							case GraphSearchWrigglerGridSorter::Mode::GBFGS:
-								bShorterPath = hCost < pFrontierNode->m_iHCost;
-								break;
-							case GraphSearchWrigglerGridSorter::Mode::UCGS:
-								bShorterPath = (pNode->m_iGCost + 1) < pFrontierNode->m_iGCost;
-								break;
-							}
-
 							// If this is a better path
-							if(bShorterPath)
+							if(LowerPathCheck(pFrontierNode, pNode, hCost))
 							{
 								// Switch path to this node
 								pFrontierNode->m_pPrevious = pNode;
@@ -157,13 +144,36 @@ std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> GraphSearchWrigglerGrid::G
 		}
 	}
 
+	BuildPath(pFinalNode, path);
+
+	return states;
+}
+
+bool GraphSearchWrigglerGrid::LowerPathCheck(const GraphSearchWrigglerGrid* pFrontierNode, const GraphSearchWrigglerGrid* pPreviousNode, int heuristic) const
+{
+	GraphSearchWrigglerGridSorter::Mode mode = GraphSearchWrigglerGridSorter::GetMode();
+	bool bShorterPath = false;
+
+	switch(mode)
+	{
+	case GraphSearchWrigglerGridSorter::Mode::GBFGS:
+		bShorterPath = heuristic < pFrontierNode->m_iHCost;
+		break;
+	case GraphSearchWrigglerGridSorter::Mode::UCGS:
+		bShorterPath = (pPreviousNode->m_iGCost + 1) < pFrontierNode->m_iGCost;
+		break;
+	}
+
+	return bShorterPath;
+}
+
+void GraphSearchWrigglerGrid::BuildPath(GraphSearchWrigglerGrid* pFinalNode, std::deque<GraphSearchWrigglerGrid*>& path)
+{
 	while((pFinalNode != nullptr) && (pFinalNode->m_pPrevious != nullptr))
 	{
 	   path.push_front(pFinalNode);
 	   pFinalNode = pFinalNode->m_pPrevious;
 	}
-
-	return states;
 }
 
 void GraphSearchWrigglerGridSorter::SetMode(Mode mode)
