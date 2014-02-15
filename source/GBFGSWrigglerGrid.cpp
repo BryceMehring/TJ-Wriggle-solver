@@ -112,7 +112,7 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 							states.emplace_back(pNewNode);
 						}
 						// If the node is in the frontier
-						else if(pFrontierNode != nullptr || frontier.Find(pNode, pFrontierNode))
+						else if(pFrontierNode != nullptr || frontier.Find(&topGrid, pFrontierNode))
 						{
 							// If this is a better path
 							if(hCost < pFrontierNode->m_iHCost)
@@ -126,7 +126,6 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 
 								frontier.Update(pFrontierNode);
 							}
-
 						}
 
 						// Move the wriggler back as we are backtracking,
