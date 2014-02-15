@@ -3,14 +3,11 @@
 
 #include "WrigglerGrid.h"
 #include <functional>
+#include <memory>
 
 class GBFGSWrigglerGrid : public WrigglerGrid
 {
 public:
-
-	friend class GBFGSWrigglerGridSorter;
-	friend class GBFGSWrigglerGridHash;
-	friend class GBFGSWrigglerGridEqual;
 
 	// Constructs an empty puzzle
 	GBFGSWrigglerGrid();
@@ -23,14 +20,21 @@ public:
 
 private:
 
-	void GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic);
+	// Applies Greedy Best First Graph Search to solve the wriggler puzzle
+	// Returns all of the states in the graph
+	// path: If a solution is found, 'path' will be filled with the nodes in the path, else, 'path' will not be modified
+	// heuristic: a function which accepts an uvec2 and returns the estimated distance to the solution
+	std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic);
 
-	GBFGSWrigglerGrid* m_pPrevious = nullptr;
-
+	GBFGSWrigglerGrid* m_pPrevious;
 	WrigglerMove m_move;
 
-	int m_iHCost = 0;
-	int m_iGCost = 0;
+	int m_iHCost;
+	int m_iGCost;
+
+	friend class GBFGSWrigglerGridSorter;
+	friend class GBFGSWrigglerGridHash;
+	friend class GBFGSWrigglerGridEqual;
 };
 
 // Defines how states are going to be sorted in the priority queue

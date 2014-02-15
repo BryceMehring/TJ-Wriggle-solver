@@ -6,13 +6,14 @@
 #include <iostream>
 #include <unordered_set>
 
-using namespace std;
+using std::cout;
+using std::endl;
 
-GBFGSWrigglerGrid::GBFGSWrigglerGrid()
+GBFGSWrigglerGrid::GBFGSWrigglerGrid() : m_pPrevious(nullptr), m_iHCost(0), m_iGCost(0)
 {
 }
 
-GBFGSWrigglerGrid::GBFGSWrigglerGrid(const std::string& file)
+GBFGSWrigglerGrid::GBFGSWrigglerGrid(const std::string& file) : m_pPrevious(nullptr), m_iHCost(0), m_iGCost(0)
 {
 	if(!Load(file))
 	{
@@ -27,7 +28,7 @@ void GBFGSWrigglerGrid::RunAI()
 
 	 std::deque<GBFGSWrigglerGrid*> path;
 
-	 GBFGS(path,[this](const uvec2& pos) -> int
+	 auto states = GBFGS(path,[this](const uvec2& pos) -> int
 	 {
 		uvec2 goal = { m_uiWidth - 1, m_uiHeight - 1 };
 		unsigned int dx = abs((int)pos.x - (int)goal.x);
@@ -50,11 +51,12 @@ void GBFGSWrigglerGrid::RunAI()
 	 cout << wallTime << endl;
 
 	 cout << path.size() << endl;
-
 }
 
-void GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic)
+std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic)
 {
+	std::vector<std::unique_ptr<GBFGSWrigglerGrid>> states;
+
 	cds::PriorityQueue<GBFGSWrigglerGrid*, GBFGSWrigglerGridSorter, GBFGSWrigglerGridHash, GBFGSWrigglerGridEqual> frontier;
 	std::unordered_set<GBFGSWrigglerGrid*, GBFGSWrigglerGridHash, GBFGSWrigglerGridEqual> closedList;
 
@@ -98,12 +100,14 @@ void GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::f
 						if(closedList.find(pNode) == closedList.end() && !frontier.Find(pNode,pFrontierNode))
 						{
 							auto* pNewNode = new GBFGSWrigglerGrid(*pNode);
+
 							pNewNode->m_pPrevious = pNode;
 							pNewNode->m_move = {w,h,d};
 							pNewNode->m_iGCost += 1;
 							pNewNode->m_iHCost = hCost;
 
 							frontier.Push(pNewNode);
+							states.emplace_back(pNewNode);
 						}
 						// If the node is in the frontier
 						else if(pFrontierNode != nullptr || frontier.Find(pNode, pFrontierNode))
@@ -120,6 +124,7 @@ void GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::f
 
 								frontier.Update(pFrontierNode);
 							}
+
 						}
 
 						// Move the wriggler back as we are backtracking,
@@ -132,12 +137,13 @@ void GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::f
 		}
 	}
 
-	while(pFinalNode != nullptr && pFinalNode->m_pPrevious != nullptr)
+	while((pFinalNode != nullptr) && (pFinalNode->m_pPrevious != nullptr))
 	{
 	   path.push_front(pFinalNode);
 	   pFinalNode = pFinalNode->m_pPrevious;
 	}
 
+	return states;
 }
 
 bool GBFGSWrigglerGridSorter::operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const
