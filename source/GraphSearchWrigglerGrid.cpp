@@ -1,4 +1,4 @@
-#include "GBFGSWrigglerGrid.h"
+#include "GraphSearchWrigglerGrid.h"
 #include "PriorityQueue.h"
 #include "Timer.h"
 #include <cassert>

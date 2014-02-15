@@ -1,6 +1,6 @@
 #include "BFTSWrigglerGrid.h"
 #include "IDDFTSWrigglerGrid.h"
-#include "GBFGSWrigglerGrid.h"
+#include "GraphSearchWrigglerGrid.h"
 #include <iostream>
 #include <cassert>
 
