@@ -34,6 +34,7 @@ int main(int n, char** cmd)
 		switch(uiAlgorithm)
 		{
 		case 0:
+			GBFGSWrigglerGridSorter::SetMode(GBFGSWrigglerGridSorter::Mode::GBFGS);
 			pWrigglerPuzzle.reset(new GBFGSWrigglerGrid(file));
 			break;
 		case 1:

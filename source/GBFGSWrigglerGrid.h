@@ -42,7 +42,19 @@ class GBFGSWrigglerGridSorter
 {
 public:
 
+	enum class Mode
+	{
+		UCGS,
+		GBFGS
+	};
+
+	static void SetMode(Mode mode);
+
 	bool operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const;
+
+private:
+
+	static Mode s_state;
 };
 
 // Defines the hash for a Wriggler State

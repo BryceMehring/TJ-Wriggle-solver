@@ -9,6 +9,8 @@
 using std::cout;
 using std::endl;
 
+GBFGSWrigglerGridSorter::Mode GBFGSWrigglerGridSorter::s_state = GBFGSWrigglerGridSorter::Mode::GBFGS;
+
 GBFGSWrigglerGrid::GBFGSWrigglerGrid() : m_pPrevious(nullptr), m_iGCost(0), m_iHCost(0)
 {
 }
@@ -146,17 +148,39 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 	return states;
 }
 
+void GBFGSWrigglerGridSorter::SetMode(Mode mode)
+{
+	s_state = mode;
+}
+
 bool GBFGSWrigglerGridSorter::operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const
 {
-	return (a->m_iHCost) > (b->m_iHCost);
+	bool order = false;
+	switch(s_state)
+	{
+	case Mode::GBFGS:
+		order = ((a->m_iHCost) > (b->m_iHCost));
+		break;
+	case Mode::UCGS:
+		order = (a->m_iGCost) > (b->m_iGCost);
+		break;
+	default:
+		assert("Unknown state selected" && false);
+	}
+
+	return order;
 }
 
 std::size_t GBFGSWrigglerGridHash::operator()(const GBFGSWrigglerGrid* data) const
 {
-	std::size_t h = 101;
+	std::size_t h = 5381;
 	for(const auto& iter : data->m_grid)
 	{
-		h += std::hash<std::string>()(iter);
+		for(char c : iter)
+		{
+			h *= 33;
+			h += c;
+		}
 	}
 
 	return h;
