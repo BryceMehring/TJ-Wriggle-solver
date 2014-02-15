@@ -20,10 +20,6 @@ int main(int n, char** cmd)
 	if(n >= 3)
 	{
 		uiAlgorithm = strtol(cmd[2],nullptr,10);
-		if(uiAlgorithm > 2)
-		{
-			uiAlgorithm = 0;
-		}
 	}
 
 	try
@@ -38,13 +34,17 @@ int main(int n, char** cmd)
 			pWrigglerPuzzle.reset(new GBFGSWrigglerGrid(file));
 			break;
 		case 1:
-			pWrigglerPuzzle.reset(new IDDFTSWrigglerGrid(file));
+			GBFGSWrigglerGridSorter::SetMode(GBFGSWrigglerGridSorter::Mode::UCGS);
+			pWrigglerPuzzle.reset(new GBFGSWrigglerGrid(file));
 			break;
 		case 2:
+			pWrigglerPuzzle.reset(new IDDFTSWrigglerGrid(file));
+			break;
+		case 3:
 			pWrigglerPuzzle.reset(new BFTSWrigglerGrid(file));
 			break;
 		default:
-			cout << "Invalid algorithm specified";
+			cout << "Invalid algorithm specified" << endl;
 			break;
 		}
 

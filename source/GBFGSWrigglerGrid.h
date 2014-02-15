@@ -49,6 +49,7 @@ public:
 	};
 
 	static void SetMode(Mode mode);
+	static Mode GetMode();
 
 	bool operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const;
 

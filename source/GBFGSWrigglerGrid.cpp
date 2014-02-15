@@ -116,8 +116,21 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 						// If the node is in the frontier
 						else if(pFrontierNode != nullptr || frontier.Find(&topGrid, pFrontierNode))
 						{
+							GBFGSWrigglerGridSorter::Mode mode = GBFGSWrigglerGridSorter::GetMode();
+							bool bShorterPath = false;
+
+							switch(mode)
+							{
+							case GBFGSWrigglerGridSorter::Mode::GBFGS:
+								bShorterPath = hCost < pFrontierNode->m_iHCost;
+								break;
+							case GBFGSWrigglerGridSorter::Mode::UCGS:
+								bShorterPath = (pNode->m_iGCost + 1) < pFrontierNode->m_iGCost;
+								break;
+							}
+
 							// If this is a better path
-							if(hCost < pFrontierNode->m_iHCost)
+							if(bShorterPath)
 							{
 								// Switch path to this node
 								pFrontierNode->m_pPrevious = pNode;
@@ -152,6 +165,12 @@ void GBFGSWrigglerGridSorter::SetMode(Mode mode)
 {
 	s_state = mode;
 }
+
+GBFGSWrigglerGridSorter::Mode GBFGSWrigglerGridSorter::GetMode()
+{
+	return s_state;
+}
+
 
 bool GBFGSWrigglerGridSorter::operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const
 {
