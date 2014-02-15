@@ -30,12 +30,12 @@ int main(int n, char** cmd)
 		switch(uiAlgorithm)
 		{
 		case 0:
-			GBFGSWrigglerGridSorter::SetMode(GBFGSWrigglerGridSorter::Mode::GBFGS);
-			pWrigglerPuzzle.reset(new GBFGSWrigglerGrid(file));
+			GraphSearchWrigglerGridSorter::SetMode(GraphSearchWrigglerGridSorter::Mode::GBFGS);
+			pWrigglerPuzzle.reset(new GraphSearchWrigglerGrid(file));
 			break;
 		case 1:
-			GBFGSWrigglerGridSorter::SetMode(GBFGSWrigglerGridSorter::Mode::UCGS);
-			pWrigglerPuzzle.reset(new GBFGSWrigglerGrid(file));
+			GraphSearchWrigglerGridSorter::SetMode(GraphSearchWrigglerGridSorter::Mode::UCGS);
+			pWrigglerPuzzle.reset(new GraphSearchWrigglerGrid(file));
 			break;
 		case 2:
 			pWrigglerPuzzle.reset(new IDDFTSWrigglerGrid(file));

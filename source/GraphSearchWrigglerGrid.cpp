@@ -9,13 +9,13 @@
 using std::cout;
 using std::endl;
 
-GBFGSWrigglerGridSorter::Mode GBFGSWrigglerGridSorter::s_state = GBFGSWrigglerGridSorter::Mode::GBFGS;
+GraphSearchWrigglerGridSorter::Mode GraphSearchWrigglerGridSorter::s_state = GraphSearchWrigglerGridSorter::Mode::GBFGS;
 
-GBFGSWrigglerGrid::GBFGSWrigglerGrid() : m_pPrevious(nullptr), m_iGCost(0), m_iHCost(0)
+GraphSearchWrigglerGrid::GraphSearchWrigglerGrid() : m_pPrevious(nullptr), m_iGCost(0), m_iHCost(0)
 {
 }
 
-GBFGSWrigglerGrid::GBFGSWrigglerGrid(const std::string& file) : m_pPrevious(nullptr), m_iGCost(0), m_iHCost(0)
+GraphSearchWrigglerGrid::GraphSearchWrigglerGrid(const std::string& file) : m_pPrevious(nullptr), m_iGCost(0), m_iHCost(0)
 {
 	if(!Load(file))
 	{
@@ -23,13 +23,14 @@ GBFGSWrigglerGrid::GBFGSWrigglerGrid(const std::string& file) : m_pPrevious(null
 	}
 }
 
-void GBFGSWrigglerGrid::RunAI()
+void GraphSearchWrigglerGrid::RunAI()
 {
 	 Timer theTimer;
 	 theTimer.Start();
 
-	 std::deque<GBFGSWrigglerGrid*> path;
+	 std::deque<GraphSearchWrigglerGrid*> path;
 
+	 // Find path with custom heuristic
 	 auto states = GBFGS(path,[this](const uvec2& pos) -> int
 	 {
 		uvec2 goal = { m_uiWidth - 1, m_uiHeight - 1 };
@@ -40,6 +41,7 @@ void GBFGSWrigglerGrid::RunAI()
 
 	 auto wallTime = theTimer.GetTime();
 
+	 // Draw the path that was found
 	 for(const auto& iter : path)
 	 {
 		 uvec2 pos = iter->m_move.h ? iter->m_wrigglers[iter->m_move.w].positions.front() : iter->m_wrigglers[iter->m_move.w].positions.back();
@@ -48,27 +50,30 @@ void GBFGSWrigglerGrid::RunAI()
 		 MoveWriggler(iter->m_move);
 	 }
 
+	 // Draw the final grid after movement
 	 cout << *this;
 
+	 // Draw wall time
 	 cout << wallTime << endl;
 
+	 // Draw path length
 	 cout << path.size() << endl;
 }
 
-std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::deque<GBFGSWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic)
+std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> GraphSearchWrigglerGrid::GBFGS(std::deque<GraphSearchWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic)
 {
-	std::vector<std::unique_ptr<GBFGSWrigglerGrid>> states;
+	std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> states;
 
-	cds::PriorityQueue<GBFGSWrigglerGrid*, GBFGSWrigglerGridSorter, GBFGSWrigglerGridHash, GBFGSWrigglerGridEqual> frontier;
-	std::unordered_set<GBFGSWrigglerGrid*, GBFGSWrigglerGridHash, GBFGSWrigglerGridEqual> closedList;
+	cds::PriorityQueue<GraphSearchWrigglerGrid*, GraphSearchWrigglerGridSorter, GraphSearchWrigglerGridHash, GraphSearchWrigglerGridEqual> frontier;
+	std::unordered_set<GraphSearchWrigglerGrid*, GraphSearchWrigglerGridHash, GraphSearchWrigglerGridEqual> closedList;
 
-	GBFGSWrigglerGrid* pFinalNode = nullptr;
+	GraphSearchWrigglerGrid* pFinalNode = nullptr;
 
 	frontier.Push(this);
 
 	while(!frontier.Empty())
 	{
-		GBFGSWrigglerGrid* pNode = frontier.Top();
+		GraphSearchWrigglerGrid* pNode = frontier.Top();
 		frontier.Pop();
 
 		// If goal test pNode is true
@@ -81,7 +86,7 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 
 		closedList.insert(pNode);
 
-		GBFGSWrigglerGrid topGrid = *pNode;
+		GraphSearchWrigglerGrid topGrid = *pNode;
 
 		// Try to move all of the wrigglers
 		for(unsigned int w = 0; w < GetNumWrigglers(); ++w)
@@ -98,12 +103,12 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 						int hCost = std::min(heuristic(topGrid.m_wrigglers[0].positions.front()),
 											 heuristic(topGrid.m_wrigglers[0].positions.back()));
 
-						GBFGSWrigglerGrid* pFrontierNode = nullptr;
+						GraphSearchWrigglerGrid* pFrontierNode = nullptr;
 
 						// If the node is not in the closed list or the frontier
 						if(closedList.find(&topGrid) == closedList.end() && !frontier.Find(&topGrid,pFrontierNode))
 						{
-							auto* pNewNode = new GBFGSWrigglerGrid(topGrid);
+							auto* pNewNode = new GraphSearchWrigglerGrid(topGrid);
 
 							pNewNode->m_pPrevious = pNode;
 							pNewNode->m_move = {w,h,d};
@@ -116,15 +121,15 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 						// If the node is in the frontier
 						else if(pFrontierNode != nullptr || frontier.Find(&topGrid, pFrontierNode))
 						{
-							GBFGSWrigglerGridSorter::Mode mode = GBFGSWrigglerGridSorter::GetMode();
+							GraphSearchWrigglerGridSorter::Mode mode = GraphSearchWrigglerGridSorter::GetMode();
 							bool bShorterPath = false;
 
 							switch(mode)
 							{
-							case GBFGSWrigglerGridSorter::Mode::GBFGS:
+							case GraphSearchWrigglerGridSorter::Mode::GBFGS:
 								bShorterPath = hCost < pFrontierNode->m_iHCost;
 								break;
-							case GBFGSWrigglerGridSorter::Mode::UCGS:
+							case GraphSearchWrigglerGridSorter::Mode::UCGS:
 								bShorterPath = (pNode->m_iGCost + 1) < pFrontierNode->m_iGCost;
 								break;
 							}
@@ -161,18 +166,18 @@ std::vector<std::unique_ptr<GBFGSWrigglerGrid>> GBFGSWrigglerGrid::GBFGS(std::de
 	return states;
 }
 
-void GBFGSWrigglerGridSorter::SetMode(Mode mode)
+void GraphSearchWrigglerGridSorter::SetMode(Mode mode)
 {
 	s_state = mode;
 }
 
-GBFGSWrigglerGridSorter::Mode GBFGSWrigglerGridSorter::GetMode()
+GraphSearchWrigglerGridSorter::Mode GraphSearchWrigglerGridSorter::GetMode()
 {
 	return s_state;
 }
 
 
-bool GBFGSWrigglerGridSorter::operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const
+bool GraphSearchWrigglerGridSorter::operator()(const GraphSearchWrigglerGrid* a, const GraphSearchWrigglerGrid* b) const
 {
 	bool order = false;
 	switch(s_state)
@@ -190,7 +195,7 @@ bool GBFGSWrigglerGridSorter::operator()(const GBFGSWrigglerGrid* a, const GBFGS
 	return order;
 }
 
-std::size_t GBFGSWrigglerGridHash::operator()(const GBFGSWrigglerGrid* data) const
+std::size_t GraphSearchWrigglerGridHash::operator()(const GraphSearchWrigglerGrid* data) const
 {
 	std::size_t h = 5381;
 	for(const auto& iter : data->m_grid)
@@ -205,7 +210,7 @@ std::size_t GBFGSWrigglerGridHash::operator()(const GBFGSWrigglerGrid* data) con
 	return h;
 }
 
-std::size_t GBFGSWrigglerGridEqual::operator()(const GBFGSWrigglerGrid* a, const GBFGSWrigglerGrid* b) const
+std::size_t GraphSearchWrigglerGridEqual::operator()(const GraphSearchWrigglerGrid* a, const GraphSearchWrigglerGrid* b) const
 {
 	return a->m_grid == b->m_grid;
 }
