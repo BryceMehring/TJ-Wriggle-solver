@@ -12,6 +12,7 @@ file(GLOB_RECURSE TJW_SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/source/*.h)
 
 add_executable(tjw ${TJW_SOURCE})
+target_link_libraries(tjw gsl gslcblas)
 
 SET(CPACK_PACKAGE_VERSION_MAJOR "3")
 SET(CPACK_PACKAGE_VERSION_MINOR "0")
