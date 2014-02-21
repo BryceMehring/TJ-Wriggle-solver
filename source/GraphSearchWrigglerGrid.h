@@ -58,7 +58,8 @@ public:
 	enum class Mode
 	{
 		UCGS, // Only use the path cost
-		GBFGS // Only use the heuristic
+		GBFGS, // Only use the heuristic
+		ASTAR
 	};
 
 	// Sets the ordering mode

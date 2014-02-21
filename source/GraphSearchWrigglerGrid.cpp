@@ -1,6 +1,7 @@
 #include "GraphSearchWrigglerGrid.h"
 #include "PriorityQueue.h"
 #include "Timer.h"
+#include "PolynomialSolver.h"
 #include <cassert>
 
 #include <iostream>
@@ -25,39 +26,51 @@ GraphSearchWrigglerGrid::GraphSearchWrigglerGrid(const std::string& file) : m_pP
 
 void GraphSearchWrigglerGrid::RunAI()
 {
-	 Timer theTimer;
-	 theTimer.Start();
+	Timer theTimer;
+	theTimer.Start();
 
-	 std::deque<GraphSearchWrigglerGrid*> path;
+	std::deque<GraphSearchWrigglerGrid*> path;
 
-	 // Find path with custom heuristic
-	 auto states = FindPath(path,[this](const uvec2& pos) -> int
-	 {
+	// Find path with custom heuristic
+	auto states = FindPath(path, [this](const uvec2& pos) -> int
+	{
 		uvec2 goal = { m_uiWidth - 1, m_uiHeight - 1 };
+		int h1 = std::max(std::abs((long long)pos.x - goal.x), std::abs((long long)pos.y - goal.y));
+
 		int dx = abs((int)pos.x - (int)goal.x);
 		int dy = abs((int)pos.y - (int)goal.y);
-		return (dx + dy);
-	 });
+		int h2 = (dx + dy);
 
-	 auto wallTime = theTimer.GetTime();
+		return 3*std::max(h1,h2);
+	});
 
-	 // Draw the path that was found
-	 for(const auto& iter : path)
-	 {
-		 uvec2 pos = iter->m_move.h ? iter->m_wrigglers[iter->m_move.w].positions.front() : iter->m_wrigglers[iter->m_move.w].positions.back();
-		 cout << iter->m_move.w << " " << !iter->m_move.h << " " << pos.x << " " << pos.y << endl;
+	auto wallTime = theTimer.GetTime();
 
-		 MoveWriggler(iter->m_move);
-	 }
+	// Draw the path that was found
+	for(const auto& iter : path)
+	{
+		uvec2 pos = iter->m_move.h ? iter->m_wrigglers[iter->m_move.w].positions.front() : iter->m_wrigglers[iter->m_move.w].positions.back();
+		cout << iter->m_move.w << " " << !iter->m_move.h << " " << pos.x << " " << pos.y << endl;
 
-	 // Draw the final grid after movement
-	 cout << *this;
+		MoveWriggler(iter->m_move);
+	}
 
-	 // Draw wall time
-	 cout << wallTime << endl;
+	// Draw the final grid after movement
+	cout << *this;
 
-	 // Draw path length
-	 cout << path.size() << endl;
+	// Draw wall time
+	cout << wallTime << endl;
+
+	// Draw path length
+	cout << path.size() << endl;
+
+	Polynomial poly;
+	poly.SetEquation(states.size(), path.size());
+	poly.Solve();
+
+	// Draw number of states generated
+	cout << "Branching Factor: " << poly.GetRoot() << endl;
+	cout << "Nodes generated: " << states.size() << endl;
 }
 
 std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> GraphSearchWrigglerGrid::FindPath(std::deque<GraphSearchWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic)
@@ -100,29 +113,28 @@ std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> GraphSearchWrigglerGrid::F
 					Direction dir = topGrid.GetGetWrigglerTailDir(w,h);
 					if(topGrid.MoveWriggler({w,h,d}))
 					{
-						int hCost = std::min(heuristic(topGrid.m_wrigglers[0].positions.front()),
-											 heuristic(topGrid.m_wrigglers[0].positions.back()));
-
-						GraphSearchWrigglerGrid* pFrontierNode = nullptr;
-
-						// If the node is not in the closed list or the frontier
-						if(closedList.find(&topGrid) == closedList.end() && !frontier.Find(&topGrid,pFrontierNode))
+						if(closedList.find(&topGrid) == closedList.end())
 						{
-							auto* pNewNode = new GraphSearchWrigglerGrid(topGrid);
+							int hCost = std::min(heuristic(topGrid.m_wrigglers[0].positions.front()),
+												 heuristic(topGrid.m_wrigglers[0].positions.back()));
 
-							pNewNode->m_pPrevious = pNode;
-							pNewNode->m_move = {w,h,d};
-							pNewNode->m_iGCost += 1;
-							pNewNode->m_iHCost = hCost;
+							GraphSearchWrigglerGrid* pFrontierNode = nullptr;
 
-							frontier.Push(pNewNode);
-							states.emplace_back(pNewNode);
-						}
-						// If the node is in the frontier
-						else if(pFrontierNode != nullptr || frontier.Find(&topGrid, pFrontierNode))
-						{
-							// If this is a better path
-							if(LowerPathCheck(pFrontierNode, pNode, hCost))
+							// If the node is not in the closed list or the frontier
+							if(!frontier.Find(&topGrid,pFrontierNode))
+							{
+								auto* pNewNode = new GraphSearchWrigglerGrid(topGrid);
+
+								pNewNode->m_pPrevious = pNode;
+								pNewNode->m_move = {w,h,d};
+								pNewNode->m_iGCost += 1;
+								pNewNode->m_iHCost = hCost;
+
+								frontier.Push(pNewNode);
+								states.emplace_back(pNewNode);
+							}
+							// If the node is in the frontier and if this is a better path
+							else if(LowerPathCheck(pFrontierNode, pNode, hCost))
 							{
 								// Switch path to this node
 								pFrontierNode->m_pPrevious = pNode;
@@ -162,6 +174,9 @@ bool GraphSearchWrigglerGrid::LowerPathCheck(const GraphSearchWrigglerGrid* pFro
 	case GraphSearchWrigglerGridSorter::Mode::UCGS:
 		bShorterPath = (pPreviousNode->m_iGCost + 1) < pFrontierNode->m_iGCost;
 		break;
+	case GraphSearchWrigglerGridSorter::Mode::ASTAR:
+		bShorterPath = (heuristic + pPreviousNode->m_iGCost + 1) < (pFrontierNode->m_iGCost + pFrontierNode->m_iHCost);
+		break;
 	}
 
 	return bShorterPath;
@@ -193,10 +208,13 @@ bool GraphSearchWrigglerGridSorter::operator()(const GraphSearchWrigglerGrid* a,
 	switch(s_state)
 	{
 	case Mode::GBFGS:
-		order = ((a->m_iHCost) > (b->m_iHCost));
+		order = (a->m_iHCost > b->m_iHCost);
 		break;
 	case Mode::UCGS:
-		order = (a->m_iGCost) > (b->m_iGCost);
+		order = (a->m_iGCost > b->m_iGCost);
+		break;
+	case Mode::ASTAR:
+		order = ((a->m_iGCost + a->m_iHCost) > (b->m_iGCost + b->m_iHCost));
 		break;
 	default:
 		assert("Unknown state selected" && false);

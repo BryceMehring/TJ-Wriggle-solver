@@ -12,6 +12,11 @@ Polynomial::Polynomial()
 	m_pGSLWorkspace = new Polynomial::PIMPL();
 }
 
+Polynomial::Polynomial(double A, unsigned int B) : Polynomial()
+{
+	SetEquation(A,B);
+}
+
 Polynomial::Polynomial(Polynomial &&other) : m_pGSLWorkspace(nullptr)
 {
 	*this = std::move(other);

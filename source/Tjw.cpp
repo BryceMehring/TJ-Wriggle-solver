@@ -6,6 +6,15 @@
 
 using namespace std;
 
+enum SearchAlgorithm
+{
+	ASTAR,
+	GBFGS,
+	UCGS,
+	IDDFTS,
+	BFTS
+};
+
 int main(int n, char** cmd)
 {
 	if(n < 2)
@@ -29,18 +38,22 @@ int main(int n, char** cmd)
 		std::unique_ptr<WrigglerGrid> pWrigglerPuzzle = nullptr;
 		switch(uiAlgorithm)
 		{
-		case 0:
+		case ASTAR:
+			GraphSearchWrigglerGridSorter::SetMode(GraphSearchWrigglerGridSorter::Mode::ASTAR);
+			pWrigglerPuzzle.reset(new GraphSearchWrigglerGrid(file));
+			break;
+		case GBFGS:
 			GraphSearchWrigglerGridSorter::SetMode(GraphSearchWrigglerGridSorter::Mode::GBFGS);
 			pWrigglerPuzzle.reset(new GraphSearchWrigglerGrid(file));
 			break;
-		case 1:
+		case UCGS:
 			GraphSearchWrigglerGridSorter::SetMode(GraphSearchWrigglerGridSorter::Mode::UCGS);
 			pWrigglerPuzzle.reset(new GraphSearchWrigglerGrid(file));
 			break;
-		case 2:
+		case IDDFTS:
 			pWrigglerPuzzle.reset(new IDDFTSWrigglerGrid(file));
 			break;
-		case 3:
+		case BFTS:
 			pWrigglerPuzzle.reset(new BFTSWrigglerGrid(file));
 			break;
 		default:

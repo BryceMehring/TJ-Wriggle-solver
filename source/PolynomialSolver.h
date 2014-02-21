@@ -2,11 +2,13 @@
 #define _POLYNOMIALSOLVER_
 #include <vector>
 
+// Defines a polynomial that is sovleable
 class Polynomial
 {
 public:
 
 	Polynomial();
+	Polynomial(double A, unsigned int B);
 	~Polynomial();
 
 	Polynomial(const Polynomial&) = delete;
