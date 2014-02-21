@@ -12,6 +12,7 @@ public:
 	Polynomial(const Polynomial&) = delete;
 	Polynomial(Polynomial&& other);
 
+	Polynomial& operator=(const Polynomial& other) = delete;
 	Polynomial& operator=(Polynomial&& other);
 
 	// Sets the following equation form:
