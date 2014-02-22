@@ -10,12 +10,12 @@ How to compile the code:
  * The fist argument must be set to a puzzle file which will be solved.
  * The second argument specifies the algorithm used:
  
-        0 - Greedy best-first graph search (default)
-        1 - Uniform-cost graph search
-        2 - Iterative deepening depth-first tree search
-        3 - Breadth-first tree search
+        0 - A* Graph Search (default)
+        1 - Greedy best-first graph search
+        2 - Uniform-cost graph search
+        3 - Iterative deepening depth-first tree search
+        4 - Breadth-first tree search
 
- * To output the solution to a file, one must redirect it.
- * Example usage: ./tjw puzzle.txt 1 > out.txt
+ * Example usage: ./tjw puzzle.txt 1
 
 
