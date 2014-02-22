@@ -14,6 +14,8 @@ file(GLOB_RECURSE TJW_SOURCE
 add_executable(tjw ${TJW_SOURCE})
 target_link_libraries(tjw gsl gslcblas)
 
+add_definitions(-DSOLVE_BFACTOR)
+
 SET(CPACK_PACKAGE_VERSION_MAJOR "3")
 SET(CPACK_PACKAGE_VERSION_MINOR "0")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")

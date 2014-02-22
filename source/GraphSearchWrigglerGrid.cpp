@@ -1,9 +1,12 @@
 #include "GraphSearchWrigglerGrid.h"
 #include "PriorityQueue.h"
 #include "Timer.h"
-#include "PolynomialSolver.h"
-#include <cassert>
 
+#ifdef SOLVE_BFACTOR
+#include "PolynomialSolver.h"
+#endif
+
+#include <cassert>
 #include <iostream>
 #include <unordered_set>
 
@@ -64,6 +67,8 @@ void GraphSearchWrigglerGrid::RunAI()
 	// Draw path length
 	cout << path.size() << endl;
 
+#ifdef SOLVE_BFACTOR
+
 	Polynomial poly;
 	poly.SetEquation(states.size(), path.size());
 	poly.Solve();
@@ -71,6 +76,8 @@ void GraphSearchWrigglerGrid::RunAI()
 	// Draw number of states generated
 	cout << "Branching Factor: " << poly.GetRoot() << endl;
 	cout << "Nodes generated: " << states.size() << endl;
+
+#endif // SOLVE_BFACTOR
 }
 
 std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> GraphSearchWrigglerGrid::FindPath(std::deque<GraphSearchWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic)
