@@ -57,13 +57,13 @@ public:
 
 	enum class Mode
 	{
-		UCGS, // Only use the path cost
-		GBFGS, // Only use the heuristic
-		ASTAR
+		UCGS, // Sort by path cost
+		GBFGS, // Sort by heuristic
+		ASTAR // Sort by path cost + heuristic
 	};
 
 	// Sets the ordering mode
-	// GBFGS is the default mode
+	// ASTAR is the default mode
 	static void SetMode(Mode mode);
 
 	// Returns the current ordering mode

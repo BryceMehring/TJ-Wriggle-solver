@@ -13,7 +13,7 @@
 using std::cout;
 using std::endl;
 
-GraphSearchWrigglerGridSorter::Mode GraphSearchWrigglerGridSorter::s_state = GraphSearchWrigglerGridSorter::Mode::GBFGS;
+GraphSearchWrigglerGridSorter::Mode GraphSearchWrigglerGridSorter::s_state = GraphSearchWrigglerGridSorter::Mode::ASTAR;
 
 GraphSearchWrigglerGrid::GraphSearchWrigglerGrid() : m_pPrevious(nullptr), m_iGCost(0), m_iHCost(0)
 {
@@ -38,13 +38,10 @@ void GraphSearchWrigglerGrid::RunAI()
 	auto states = FindPath(path, [this](const uvec2& pos) -> int
 	{
 		uvec2 goal = { m_uiWidth - 1, m_uiHeight - 1 };
-		int h1 = std::max(std::abs((long long)pos.x - goal.x), std::abs((long long)pos.y - goal.y));
 
 		int dx = abs((int)pos.x - (int)goal.x);
 		int dy = abs((int)pos.y - (int)goal.y);
-		int h2 = (dx + dy);
-
-		return 3*std::max(h1,h2);
+		return (dx + dy);
 	});
 
 	auto wallTime = theTimer.GetTime();
@@ -184,6 +181,8 @@ bool GraphSearchWrigglerGrid::LowerPathCheck(const GraphSearchWrigglerGrid* pFro
 	case GraphSearchWrigglerGridSorter::Mode::ASTAR:
 		bShorterPath = (heuristic + pPreviousNode->m_iGCost + 1) < (pFrontierNode->m_iGCost + pFrontierNode->m_iHCost);
 		break;
+	default:
+		assert("Unknown state selected" && false);
 	}
 
 	return bShorterPath;
@@ -207,7 +206,6 @@ GraphSearchWrigglerGridSorter::Mode GraphSearchWrigglerGridSorter::GetMode()
 {
 	return s_state;
 }
-
 
 bool GraphSearchWrigglerGridSorter::operator()(const GraphSearchWrigglerGrid* a, const GraphSearchWrigglerGrid* b) const
 {
