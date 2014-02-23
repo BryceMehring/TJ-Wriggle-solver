@@ -16,6 +16,6 @@ How to compile the code:
         3 - Iterative deepening depth-first tree search
         4 - Breadth-first tree search
 
- * Example usage: ./tjw puzzle.txt 1
+ * Example usage: `./tjw puzzle.txt 1`
 
 
