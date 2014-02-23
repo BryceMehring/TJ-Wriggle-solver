@@ -1,9 +1,14 @@
 ##CS347 TJ-Wriggle solver
 
-How to compile the code:
+####Building using CMake:
 
- 1. qmake
- 2. make
+ 1. `cmake .` or use the CMake GUI
+ 2. `make`
+
+####Building using qmake:
+
+ 1. `qmake`
+ 2. `make`
 
 ##Running the program:
 
