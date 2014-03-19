@@ -3,12 +3,13 @@
 #include "Timer.h"
 
 #ifdef SOLVE_BFACTOR
-#include "PolynomialSolver.h"
+#include "PolySolver/PolynomialSolver.h"
 #endif
 
 #include <cassert>
 #include <iostream>
 #include <unordered_set>
+#include <algorithm>
 
 using std::cout;
 using std::endl;

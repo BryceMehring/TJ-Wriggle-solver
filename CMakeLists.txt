@@ -3,34 +3,27 @@ project(TJ-Wriggler CXX)
 
 if(UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -pedantic")
+	add_definitions(-DSOLVE_BFACTOR)
 endif()
 
-include_directories(${CMAKE_SOURCE_DIR}/Source)
+include_directories(${CMAKE_SOURCE_DIR}/source)
 
-file(GLOB_RECURSE TJW_SOURCE
+file(GLOB TJW_SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/source/*.h)
+	
+if(UNIX)
+	file(GLOB POLY_SOLVER
+		${CMAKE_CURRENT_SOURCE_DIR}/source/PolySolver/*.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/source/PolySolver/*.h)
+		
+	list(APPEND ${TJW_SOURCE} ${POLY_SOLVER})
+endif()
 
 add_executable(tjw ${TJW_SOURCE})
-target_link_libraries(tjw gsl gslcblas)
 
-add_definitions(-DSOLVE_BFACTOR)
-
-SET(CPACK_PACKAGE_VERSION_MAJOR "4")
-SET(CPACK_PACKAGE_VERSION_MINOR "0")
-SET(CPACK_PACKAGE_VERSION_PATCH "0")
-
-set(CPACK_GENERATOR "ZIP")
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "./")
-include(InstallRequiredSystemLibraries)
-include(CPack)
-
-file(GLOB_RECURSE OUTPUT_FILES
-	${CMAKE_CURRENT_SOURCE_DIR}/*.txt.out)
-
-install(FILES tjw.pro DESTINATION ./)
-install(FILES README.md DESTINATION ./)
-install(FILES ${OUTPUT_FILES} DESTINATION ./)
-install(DIRECTORY source/ DESTINATION ./source)
+if(UNIX)
+	target_link_libraries(tjw gsl gslcblas)
+endif()
 
 
