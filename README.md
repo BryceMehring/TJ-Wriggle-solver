@@ -1,4 +1,4 @@
-##CS347 TJ-Wriggle solver
+##CS347 [TJ-Wriggle](http://www.clickmazes.com/tjwrig/ixbhwrig.htm) solver
 
 ####Building using CMake:
 
@@ -22,5 +22,3 @@
         4 - Breadth-first tree search
 
  * Example usage: `./tjw puzzle.txt 1`
-
-
