@@ -1,4 +1,4 @@
-##CS347 [TJ-Wriggle](http://www.clickmazes.com/tjwrig/ixbhwrig.htm) solver
+##[TJ-Wriggle](http://www.clickmazes.com/tjwrig/ixbhwrig.htm) solver
 
 ####Building using CMake:
 
