@@ -5,11 +5,6 @@
  1. `cmake .` or use the CMake GUI
  2. `make`
 
-####Building using qmake:
-
- 1. `qmake`
- 2. `make`
-
 ##Running the program:
 
  * The fist argument must be set to a puzzle file which will be solved.
