@@ -9,21 +9,21 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/source)
 
 file(GLOB TJW_SOURCE
-	${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/source/*.h)
+	${CMAKE_SOURCE_DIR}/source/*.cpp
+	${CMAKE_SOURCE_DIR}/source/*.h)
 	
 if(UNIX)
 	file(GLOB POLY_SOLVER
-		${CMAKE_CURRENT_SOURCE_DIR}/source/PolySolver/*.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/source/PolySolver/*.h)
+		${CMAKE_SOURCE_DIR}/source/PolySolver/*.cpp
+		${CMAKE_SOURCE_DIR}/source/PolySolver/*.h)
 		
-	list(APPEND ${TJW_SOURCE} ${POLY_SOLVER})
+    add_library(PolySolver STATIC ${POLY_SOLVER})
 endif()
 
 add_executable(tjw ${TJW_SOURCE})
 
 if(UNIX)
-	target_link_libraries(tjw gsl gslcblas)
+	target_link_libraries(tjw PolySolver gsl gslcblas)
 endif()
 
 
