@@ -5,11 +5,6 @@
  1. `cmake .` or use the CMake GUI
  2. `make`
 
-####Building using qmake:
-
- 1. `qmake`
- 2. `make`
-
 ##Running the program:
 
  * The fist argument must be set to a puzzle file which will be solved.
@@ -21,4 +16,4 @@
         3 - Iterative deepening depth-first tree search
         4 - Breadth-first tree search
 
- * Example usage: `./tjw puzzle.txt 1`
+ * Example usage: `./tjw tests/puzzle1.txt 1`
