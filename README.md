@@ -1,11 +1,12 @@
 ##[TJ-Wriggle](http://www.clickmazes.com/tjwrig/ixbhwrig.htm) solver
 
-####Building using CMake:
+##Building using CMake:
 
  1. `cmake .` or use the CMake GUI
  2. `make`
 
 ##Running the program:
+
 
  * The first argument must be set to a puzzle file which will be solved.
  * The second argument specifies the algorithm used:
