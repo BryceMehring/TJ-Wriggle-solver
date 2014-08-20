@@ -80,14 +80,7 @@ void BFTSWrigglerGrid::RunAI()
 		MoveWriggler(pNode->move);
 	}
 
-	// Draw the final grid after movement
-	cout << *this;
-
-	// Draw the time
-	cout << m_wallTime << endl;
-
-	// Draw path length
-	cout << path.size() << endl;
+	DisplayResults(m_wallTime, path.size());
 }
 
 void BFTSWrigglerGrid::GenerateTree(std::unordered_set<Wriggler, WrigglerHash>& closedList, Node* pTree)

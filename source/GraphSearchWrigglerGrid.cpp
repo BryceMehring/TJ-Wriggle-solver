@@ -2,10 +2,6 @@
 #include "PriorityQueue.h"
 #include "Timer.h"
 
-#ifdef SOLVE_BFACTOR
-#include "PolySolver/PolynomialSolver.h"
-#endif
-
 #include <cassert>
 #include <iostream>
 #include <unordered_set>
@@ -56,26 +52,7 @@ void GraphSearchWrigglerGrid::RunAI()
 		MoveWriggler(iter->m_move);
 	}
 
-	// Draw the final grid after movement
-	cout << *this;
-
-	// Draw wall time
-	cout << wallTime << endl;
-
-	// Draw path length
-	cout << path.size() << endl;
-
-#ifdef SOLVE_BFACTOR
-
-	Polynomial poly;
-	poly.SetEquation(states.size(), path.size());
-	poly.Solve();
-
-	// Draw number of states generated
-	cout << "Branching Factor: " << poly.GetRoot() << endl;
-	cout << "Nodes generated: " << states.size() << endl;
-
-#endif // SOLVE_BFACTOR
+	DisplayResults(wallTime, path.size(), states.size());
 }
 
 std::vector<std::unique_ptr<GraphSearchWrigglerGrid>> GraphSearchWrigglerGrid::FindPath(std::deque<GraphSearchWrigglerGrid*>& path, const std::function<int(const uvec2&)>& heuristic)

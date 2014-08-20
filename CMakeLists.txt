@@ -17,7 +17,7 @@ if(UNIX)
 		${CMAKE_SOURCE_DIR}/source/PolySolver/*.cpp
 		${CMAKE_SOURCE_DIR}/source/PolySolver/*.h)
 		
-    add_library(PolySolver STATIC ${POLY_SOLVER})
+	add_library(PolySolver STATIC ${POLY_SOLVER})
 endif()
 
 add_executable(tjw ${TJW_SOURCE})

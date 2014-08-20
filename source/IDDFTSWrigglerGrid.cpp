@@ -38,14 +38,7 @@ void IDDFTSWrigglerGrid::RunAI()
 		cout << iter->move.w << " " << !iter->move.h << " " << pos.x << " " << pos.y << endl;
 	}
 
-	// Draw the final grid after movement
-	cout << *this;
-
-	// Draw wall time
-	cout << wallTime << endl;
-
-	// Draw path length
-	cout << path.size() << endl;
+	DisplayResults(wallTime, path.size());
 }
 
 void IDDFTSWrigglerGrid::IDDFTS(std::deque<std::unique_ptr<Node>>& path)

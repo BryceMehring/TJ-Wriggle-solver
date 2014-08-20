@@ -2,6 +2,13 @@
 #include <fstream>
 #include <cctype>
 #include <cassert>
+#include <iostream>
+
+#ifdef SOLVE_BFACTOR
+#include "PolySolver/PolynomialSolver.h"
+#endif
+
+using namespace std;
 
 const ivec2 WrigglerGrid::s_adjacentTiles[] =
 {
@@ -170,6 +177,33 @@ Direction WrigglerGrid::GetGetWrigglerTailDir(unsigned int w, bool bHead) const
 	}
 
 	return dir;
+}
+
+void WrigglerGrid::DisplayResults(std::uint64_t time, int pathLength, int nodesGenerated) const
+{
+	// Draw the final grid after movement
+	cout << "Final State: " << endl;
+	cout << *this << endl;
+
+	// Draw wall time
+	cout << "Wall Time: " << time << endl;
+
+	// Draw path length
+	cout << "Path Length: " << pathLength << endl;
+
+#ifdef SOLVE_BFACTOR
+	if(nodesGenerated > 0)
+	{
+		Polynomial poly;
+		poly.SetEquation(nodesGenerated, pathLength);
+		poly.Solve();
+
+		// Draw number of states generated
+		cout << "Branching Factor: " << poly.GetRoot() << endl;
+		cout << "Nodes generated: " << nodesGenerated << endl;
+	}
+#endif // SOLVE_BFACTOR
+
 }
 
 bool WrigglerGrid::Load(std::istream& stream)

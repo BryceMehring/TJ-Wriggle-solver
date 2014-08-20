@@ -52,6 +52,12 @@ protected:
 	// bHead: true to move the head, false to move the tail
 	Direction GetGetWrigglerTailDir(unsigned int w, bool bHead) const;
 
+	// Outputs the results
+	// time: wall time of algorithm
+	// pathLength: the number of nodes in the path
+	// nodesGenerated: the total number of nodes looked at during the search. This is optional and enables the polynomial solver if a positive number is used
+	void DisplayResults(std::uint64_t time, int pathLength, int nodesGenerated = -1) const;
+
 private:
 
 	// Loads the grid from the specified stream and returns true if successful, false otherwise
