@@ -280,7 +280,7 @@ ivec2 WrigglerGrid::GetDirVector(char c) const
 
 Direction WrigglerGrid::GetDir(char c) const
 {
-	Direction dir;
+	Direction dir = Up;
 	switch(c)
 	{
 	case 'U':
