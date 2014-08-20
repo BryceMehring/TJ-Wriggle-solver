@@ -7,7 +7,7 @@
 
 ##Running the program:
 
- * The fist argument must be set to a puzzle file which will be solved.
+ * The first argument must be set to a puzzle file which will be solved.
  * The second argument specifies the algorithm used:
  
         0 - A* Graph Search (default)
