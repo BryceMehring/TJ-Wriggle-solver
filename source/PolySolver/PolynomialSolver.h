@@ -2,7 +2,7 @@
 #define _POLYNOMIALSOLVER_
 #include <vector>
 
-// Defines a polynomial that is sovleable
+// Defines a polynomial whose roots can be solvable
 class Polynomial
 {
 public:
